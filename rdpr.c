@@ -12,7 +12,7 @@ static const char* usage =
 
 int main(int argc, char** argv) {
 
-    enum {sender_ip, sender_port, receiver_ip, receiver_port, sender_file_name};
+    enum {sender_ip, sender_port, reciever_file_name};
     char* args[4];
     int arg = 0;
     int i;
