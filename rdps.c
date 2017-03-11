@@ -72,6 +72,8 @@ int main(int argc, char** argv) {
     rdp_sender_disconnect();
     // Close filestream
     rdp_filestream_close();
+    // Print stats
+    rdp_sender_stats();
 
     return EXIT_SUCCESS;
 }

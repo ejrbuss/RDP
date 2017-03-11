@@ -65,6 +65,8 @@ int main(int argc, char** argv) {
     rdp_recieve();
     // Close filestream
     rdp_filestream_close();
+    // Print stats
+    rdp_reciever_stats();
 
     return EXIT_SUCCESS;
 }
