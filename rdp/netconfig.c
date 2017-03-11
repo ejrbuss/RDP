@@ -386,8 +386,10 @@ void rdp_recieve() {
             } else if(rdp_flags() & rdp_DAT) {
                 stat_recieved_dat_packets++;
                 char buffer[SOCK_BUFFER_SIZE];
+                rdp_log("payload_size: %d", rdp_payload_size());
                 rdp_payload(buffer);
-                rdp_filestream_write(buffer, rdp_payload_size(strlen(buffer)));
+                rdp_log("buffer_size: %s", buffer);
+                rdp_filestream_write(buffer, rdp_payload_size());
                 // read data
                 // check if we should send ack
                     // send ack
