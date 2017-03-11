@@ -181,14 +181,13 @@ void send_rdp(
     rdp_log("Prepping packet for sending:");
     rdp_log_hex(send_buffer);
     char buffer[512];
-    memset(&buffer, 0, sizeof(buffer));
-    stshort(2, buffer);
-    strcat(buffer+2, "Hello World");
+    memset(&buffer, 0, 512);
+    strcpy(buffer, "Hello World");
     //sendto(sock, buffer, sizeof(buffer), 0, recip_addr, recip_addr_length);
     if(sendto(
         destination_socket,
         buffer, //send_buffer,
-        sizeof(buffer), //rdp_packaged_size(payload_size),
+        512, //rdp_packaged_size(payload_size),
         0,
         (struct sockaddr*) &destination_address,
         sizeof(destination_address)
