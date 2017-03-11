@@ -178,12 +178,11 @@ void send_rdp(
         payload_size,
         payload
     );
-    rdp_log("Prepping packet for sending:");
-    //rdp_log_hex(send_buffer, rdp_packaged_size(payload_size));
+    char* buffer = "testing";
     if(sendto(
         destination_socket,
-        send_buffer,
-        rdp_packaged_size(payload_size) + 1,
+        buffer,
+        strlen(buffer),
         0,
         (struct sockaddr*) &destination_address,
         sizeof(destination_address)
