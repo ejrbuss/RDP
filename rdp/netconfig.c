@@ -48,7 +48,7 @@ char send_buffer[SOCK_BUFFER_SIZE];
 
 int source_socket;
 struct sockaddr_in source_address;
-int destiantion_socket;
+int destination_socket;
 struct sockaddr_in destination_address;
 
 int seq_number;
@@ -95,8 +95,8 @@ int listen_rdp(int timeout_milli) {
 
     // We don't yet know our destination so read it in
     if(*destination_ip == 0 || *destination_port == 0) {
-        strcpy(destination_ip, sinet_ntoa(destination_address.sin_addr));
-        strcpy(destination_port, itoa(ntohs(destination_address.sin_port));
+        strcpy(destination_ip, (char*) sinet_ntoa(destination_address.sin_addr));
+        strcpy(destination_port, (char*) itoa(ntohs(destination_address.sin_port)));
         if (destination_ip == NULL) {
             close(source_socket);
             rdp_exit(EXIT_FAILURE, "Failed to read destination IP:port from recieved packet.");
@@ -136,7 +136,7 @@ void send_rdp(
         payload
     );
     if(sendto(
-        destiantion_socket,
+        destination_socket,
         send_buffer,
         rdp_packaged_size(payload_size),
         0,
