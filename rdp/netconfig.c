@@ -1,8 +1,19 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <arpa/inet.h>
 #include "netconfig.h"
 #include "protocol.h"
 #include "util.h"
+
+#define SOCK_BUFFER_SIZE = 2000;
+#define ADDR_SIZE        = 200;
+#define TIMEOUT          = 500;
 
 int maximum_rst_attempts = 5;
 
@@ -32,10 +43,147 @@ int stat_end_time                     = 0;
 
 enum { event_recieved, event_timeout };
 
-char recieve_buffer[2000];
+char recieve_buffer[SOCK_BUFFER_SIZE];
+char send_buffer[SOCK_BUFFER_SIZE];
 
-int listen() {
+int source_socket;
+struct sockaddr_in source_address;
+int destiantion_socket;
+struct sockaddr_in destination_address;
 
+int seq_number;
+int ack_number;
+
+char source_ip[ADDR_SIZE];
+char source_port[ADDR_SIZE];
+char destination_ip[ADDR_SIZE];
+char destination_port[ADDR_SIZE];
+
+int listen(int timeout_milli) {
+    int select_result;
+    ssize_t recsize;
+    socklen_t fromlen;
+    fd_set read_fds;
+    struct timeval timeout;
+
+    FD_ZERO(&read_fds);
+    FD_SET(source_socket, &read_fds);
+    timeout.tv_sec  = 0;
+    timeout.tv_usec = timeout * 1000;
+
+    // Wait on select
+    select_result = select(1, &read_fds, NULL, NULL, &timeout);
+
+    // Check result
+    switch (select_result) {
+        case -1: rdp_exit(EXIT_FAILURE, "Error in select: %s\n", strerror(errno));
+        case 0: return event_timeout;
+    }
+
+    // Recieve and parse the packet
+    recsize = recvfrom(
+        source_socket,
+        (void*) recieve_buffer,
+        SOCK_BUFFER_SIZE,
+        0,
+        (struct sockaddr*) &destination_address,
+        &fromlen
+    );
+    rdp_parse(recieve_buffer);
+
+    // We don't yet know our destination so read it in
+    if(*destination_ip == 0 || *destination_port == 0) {
+        destination_ip   = inet_ntoa(client_address.sin_addr);
+        destination_port = itoa(ntohs(client_address.sin_port));
+        if (client_IP == NULL) {
+            rdp_exit(EXIT_FAILURE, "Failed to read destination IP:port from recieved packet.");
+        }
+    }
+
+    // Log the packet
+    rdp_log_packet(
+        "r",
+        destination_ip,
+        destination_port,
+        source_ip,
+        source_port,
+        rdp_flag_names[rdp_flags()],
+        rdp_seq_number(),
+        rdp_ack_number(),
+        rdp_window_size() | rdp_payload_size()
+    );
+}
+
+void send(
+    const char* event,
+    const int flags,
+    const int seq_number,
+    const int ack_number,
+    const int window_size,
+    const int payload_size,
+    const char* payload
+) {
+    rdp_package(
+        send_buffer,
+        flags,
+        seq_number,
+        ack_number
+        window_size,
+        payload_size,
+        payload
+    );
+    if(sendto(
+        destiantion_socket,
+        buffer,
+        strlen(buffer),
+        0,
+        (struct sockaddr*) &destination_address,
+        sizeof(destination_address)
+    ) < 0) {
+        rdp_exit(EXIT_FAILURE, "Error sending packet: %s\n", strerror(errno));
+    } else {
+        rdp_log_packet(
+            event,
+            source_ip,
+            source_port,
+            destination_ip,
+            destination_port,
+            rdp_flag_names[flags],
+            seq_number,
+            ack_number,
+            window_size | payload_size
+        );
+    }
+}
+
+void open_source_socket() {
+    source_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (source_socket == -1) {
+        rdp_exit(EXIT_FAILURE, "Unable to create sender socket");
+    }
+    memset(&source_address, 0, sizeof(source_address));
+    source_address.sin_family      = AF_INET;
+    source_address.sin_addr.s_addr = inet_addr(source_ip);
+    source_address.sin_port        = htons(atoi(source_port));
+    if (-1 == bind(
+        source_socket,
+        (struct sockaddr*) &source_address,
+        sizeof(source_address)
+    )) {
+        close(sock);
+        rdp_exit(EXIT_FAILURE, "Failed to bind socket");
+    }
+}
+
+void open_destiantion_socket() {
+    destination_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (destination_socket == -1) {
+        rdp_exit(EXIT_FAILURE, "Unable to create reciever socket");
+    }
+    memset(&destination_address, 0, sizeof(destination_address));
+    destination_address.sin_family      = AF_INET;
+    destination_address.sin_addr.s_addr = inet_addr(destination_ip);
+    source_address.sin_port             = htons(atoi(destination_port));
 }
 
 void rdp_sender(
@@ -44,29 +192,47 @@ void rdp_sender(
     const char* reciever_ip,
     const char* reciever_port
 ) {
+    // Sent internal variables
+    strcpy(source_ip, sender_ip);
+    strcpy(source_port, sender_port);
+    strcpy(destination_ip, reciever_ip);
+    strcpy(destination_port, reciever_port);
 
+    // Init destination socket and socket address
+    open_destiantion_socket();
+    // Init source socket and socket address
+    open_source_socket();
 }
 
 void rdp_sender_connect() {
 
     // SEND SYN packet
 
+    // init seq number
+    int seq = rdp_get_seq_number();
+
+    send("s", rdp_SYN, seq, 0, 0, 0, "");
+
     while(1) {
-        int event = listen();
+        int event = listen(TIMEOUT);
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
-                // check sequence number
-                // return
+                if(rdp_ack_number() == seq + 1) { // Check sequence number
+                    seq++;
+                    return;
+                }
+                send("S", rdp_SYN, seq, 0, 0, 0, "");
             } else if(rdp_flags() & rdp_RST) {
                 stat_recieved_rst_packets++;
-                // try again
+                send("S", rdp_SYN, seq, 0, 0, 0, "");
             } else {
                 rdp_log("Unkown packet:");
                 rdp_log_hex(recieve_buffer);
             }
         } else {
             // timeout
+            send("S", rdp_SYN, seq, 0, 0, 0, send_buffer);
             // resend
             // extend timer
         }
@@ -76,7 +242,16 @@ void rdp_sender_connect() {
 void rdp_send() {
 
     // SEND DAT packet
+    int size = rdp_filestream_size();
+    int l;
+    int i;
 
+    for(i = 0; i < size; i += 700) {
+        char payload[701];
+        rdp_filestream_read(buffer, 700, i));
+        send("s", rdp_DAT, 0, 0, 0, 700, payload);
+    }
+    /*
     while(1) {
         int event = listen();
         if(event == event_recieved) {
@@ -97,21 +272,26 @@ void rdp_send() {
             // extend timer
         }
     }
+    */
 }
 
 void rdp_sender_disconnect() {
 
     // SEND FIN packet
+    send("s", rdp_FIN, ++seq_number, 0, 0, 0, "");
 
     while(1) {
         int event = listen();
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
-                // check ack number
-                    // return
+                if(rdp_seq_number() == seq_number + 1) {
+                    return;
+                }
+                send("S", rdp_FIN, ++seq_number, 0, 0, 0, "");
             } else if(rdp_flags() & rdp_RST) {
                 stat_recieved_rst_packets++;
+                send("S", rdp_FIN, ++seq_number, 0, 0, 0, "");
                 // try again
             } else {
                 rdp_log("Unkown packet:");
@@ -119,6 +299,7 @@ void rdp_sender_disconnect() {
             }
         } else {
             // timeout
+            send("S", rdp_FIN, ++seq_number, 0, 0, 0, "");
             // resend
             // extend timer
         }
@@ -155,7 +336,13 @@ void rdp_reciever(
     const char* reciever_ip,
     const char* reciever_port
 ) {
+    strcpy(source_ip, reciever_ip);
+    strcpy(source_port, reciever_port);
+    rdp_zero(destination_ip, ADDR_SIZE);
+    rdo_zero(destination_port, ADDR_SIZE);
 
+    // Init source socket and socket address
+    open_source_socket();
 }
 
 void rdp_recieve() {
@@ -164,9 +351,11 @@ void rdp_recieve() {
         if(event == event_recieved) {
             if(rdp_flags() & rdp_SYN) {
                 stat_recieved_syn_packets++;
-                // send ack
+                send("s", rdp_ACK, rdp_seq_number() + 1, 0, 0, 0, "");
             } else if(rdp_flags() & rdp_FIN) {
                 stat_recieved_fin_packets++;
+                send("s", rdp_ACK, rdp_seq_number() + 1, 0, 0, 0, "");
+                return;
                 // send ack
                 // return
             } else if(rdp_flags() & rdp_RST) {
@@ -174,6 +363,9 @@ void rdp_recieve() {
                 // try again
             } else if(rdp_flags() & rdp_DAT) {
                 stat_recieved_dat_packets++;
+                char buffer[SOCK_BUFFER_SIZE];
+                rdp_payload(buffer);
+                rdp_filestream_write(buffer, rdp_payload_size());
                 // read data
                 // check if we should send ack
                     // send ack
