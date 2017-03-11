@@ -88,7 +88,7 @@ void open_source_socket() {
     }
 }
 
-void open_destiantion_socket() {
+void open_destination_socket() {
     rdp_log("destination_ip: %s\ndestination_port %s\n", destination_ip, destination_port);
     destination_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (destination_socket == -1) {
@@ -103,9 +103,9 @@ void open_destiantion_socket() {
 int listen_rdp(int timeout_milli) {
     int select_result;
     ssize_t recsize;
-    socklen_t fromlen;
-    fd_set read_fds;
     struct timeval timeout;
+    fd_set read_fds;
+
 
     rdp_log("listening...");
 
@@ -134,19 +134,19 @@ int listen_rdp(int timeout_milli) {
         SOCK_BUFFER_SIZE,
         0,
         (struct sockaddr*) &destination_address,
-        &fromlen
+        sizeof(destination_address)
     );
     rdp_parse(recieve_buffer);
 
     // We don't yet know our destination so read it in
-    if(*destination_ip == 0 || *destination_port == 0) {
+    if(destination_ip[0] == 0 || destination_port[0] == 0) {
         strcpy(destination_ip, inet_ntoa(destination_address.sin_addr));
         sprintf(destination_port, "%d", ntohs(destination_address.sin_port));
         if (destination_ip == NULL) {
             close(source_socket);
             rdp_exit(EXIT_FAILURE, "Failed to read destination IP:port from recieved packet.");
         }
-        open_destiantion_socket();
+        open_destination_socket();
     }
 
     // Log the packet
@@ -161,6 +161,7 @@ int listen_rdp(int timeout_milli) {
         rdp_ack_number(),
         rdp_window_size() | rdp_payload_size()
     );
+    return event_recieved;
 }
 
 void send_rdp(
@@ -219,7 +220,7 @@ void rdp_sender(
     strcpy(destination_port, reciever_port);
 
     // Init destination socket and socket address
-    open_destiantion_socket();
+    open_destination_socket();
     // Init source socket and socket address
     open_source_socket();
 }
