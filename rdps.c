@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     if(argc == 1) {
         printf("%s%s", rdp_logo, usage);
     }
-    for(i = 0; i < argc; i++) {
+    for(i = 1; i < argc; i++) {
         rdp_opt(argv[i]);
         if(rdp_opt_cmp("-h") || rdp_opt_cmp("--help")) {
             rdp_exit(EXIT_SUCCESS,
