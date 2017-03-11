@@ -59,6 +59,11 @@ int rdp_parse(char* buffer) {
 
     char _magic_[7];
     rdp_zero(_magic_, 7);
+    flags        = 0;
+    seq_number   = 0;
+    ack_number   = 0;
+    window_size  = 0;
+    payload_size = 0;
 
     // Deserialize
     memcpy(_magic_,       buffer + 0,  6);
@@ -67,10 +72,10 @@ int rdp_parse(char* buffer) {
     memcpy(&ack_number,   buffer + 9,  2);
     if(flags & rdp_DAT) {
         memcpy(&payload_size, buffer + 11, 2);
-        window_size = -1;
+        window_size = 0;
     } else {
         memcpy(&window_size,  buffer + 11, 2);
-        payload_size = -1;
+        payload_size = 0;
     }
     payload = buffer + header_size;
     return rdp_streq(_magic_, "CSC361");
