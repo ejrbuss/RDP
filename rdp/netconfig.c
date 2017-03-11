@@ -105,6 +105,7 @@ int listen_rdp(int timeout_milli) {
     ssize_t recsize;
     struct timeval timeout;
     fd_set read_fds;
+    socklen_t socket_length = sizeof(destination_address);
 
 
     rdp_log("listening...");
@@ -134,7 +135,7 @@ int listen_rdp(int timeout_milli) {
         SOCK_BUFFER_SIZE,
         0,
         (struct sockaddr*) &destination_address,
-        sizeof(destination_address)
+        &socket_length
     );
     rdp_parse(recieve_buffer);
 
