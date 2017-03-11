@@ -102,6 +102,7 @@ int listen_rdp(int timeout_milli) {
             close(source_socket);
             rdp_exit(EXIT_FAILURE, "Failed to read destination IP:port from recieved packet.");
         }
+        open_destiantion_socket();
     }
 
     // Log the packet
@@ -191,6 +192,7 @@ void open_source_socket() {
 }
 
 void open_destiantion_socket() {
+    rdp_log("destination_ip: %s\ndestination_port %s\n", destination_ip, destination_port);
     destination_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (destination_socket == -1) {
         rdp_exit(EXIT_FAILURE, "Unable to create reciever socket");
