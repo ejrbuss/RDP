@@ -11,9 +11,9 @@
 #include "protocol.h"
 #include "util.h"
 
-#define SOCK_BUFFER_SIZE 2000;
-#define ADDR_SIZE        200;
-#define TIMEOUT          500;
+#define SOCK_BUFFER_SIZE 2000
+#define ADDR_SIZE        200
+#define TIMEOUT          500
 
 int maximum_rst_attempts = 5;
 
