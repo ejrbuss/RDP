@@ -184,7 +184,7 @@ void open_source_socket() {
         sizeof(source_address)
     )) {
         close(source_socket);
-        rdp_exit(EXIT_FAILURE, "Failed to bind socket");
+        rdp_exit(EXIT_FAILURE, "Failed to bind socket: %s\n", strerror(errno));
     }
 }
 
