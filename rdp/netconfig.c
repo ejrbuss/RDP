@@ -96,7 +96,7 @@ int listen_rdp(int timeout_milli) {
     // We don't yet know our destination so read it in
     if(*destination_ip == 0 || *destination_port == 0) {
         strcpy(destination_ip, inet_ntoa(destination_address.sin_addr));
-        itoa(ntohs(destination_address.sin_port), destination_port, 10);
+        sprintf(destination_port, "%d", ntohs(destination_address.sin_port));
         if (destination_ip == NULL) {
             close(source_socket);
             rdp_exit(EXIT_FAILURE, "Failed to read destination IP:port from recieved packet.");
