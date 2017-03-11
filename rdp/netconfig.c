@@ -178,10 +178,11 @@ void send_rdp(
         payload_size,
         payload
     );
+    char* buffer = "Hello World";
     if(sendto(
         source_socket,
-        send_buffer,
-        strlen(send_buffer),
+        buffer,
+        strlen(buffer),
         0,
         (struct sockaddr*) &destination_address,
         sizeof(destination_address)
