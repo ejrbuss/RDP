@@ -8,7 +8,7 @@ extern void rdp_sender(
     const char* reciever_ip,
     const char* reciever_port
 );
-ex10tern void rdp_sender_connect();
+extern void rdp_sender_connect();
 extern void rdp_send();
 extern void rdp_sender_disconnect();
 extern void rdp_sender_stats();
