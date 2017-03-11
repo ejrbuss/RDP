@@ -77,7 +77,7 @@ int listen_rdp(int timeout_milli) {
     // Check result
     switch (select_result) {
         case -1:
-            close(source_sock);
+            close(source_socket);
             rdp_exit(EXIT_FAILURE, "Error in select: %s\n", strerror(errno));
         case 0: return event_timeout;
     }
@@ -95,10 +95,10 @@ int listen_rdp(int timeout_milli) {
 
     // We don't yet know our destination so read it in
     if(*destination_ip == 0 || *destination_port == 0) {
-        destination_ip   = inet_ntoa(destination_address.sin_addr);
-        destination_port = itoa(ntohs(destination_address.sin_port));
-        if (client_IP == NULL) {
-            close(source_sock);
+        strcpy(destination_ip, sinet_ntoa(destination_address.sin_addr));
+        strcpy(destination_port, itoa(ntohs(destination_address.sin_port));
+        if (destination_ip == NULL) {
+            close(source_socket);
             rdp_exit(EXIT_FAILURE, "Failed to read destination IP:port from recieved packet.");
         }
     }
@@ -138,12 +138,12 @@ void send_rdp(
     if(sendto(
         destiantion_socket,
         send_buffer,
-        strlen(rdp_packaged_size(payload_size)),
+        rdp_packaged_size(payload_size),
         0,
         (struct sockaddr*) &destination_address,
         sizeof(destination_address)
     ) < 0) {
-        close(source_sock);
+        close(source_socket);
         rdp_exit(EXIT_FAILURE, "Error sending packet: %s\n", strerror(errno));
     } else {
         rdp_log_packet(
@@ -183,7 +183,7 @@ void open_source_socket() {
         (struct sockaddr*) &source_address,
         sizeof(source_address)
     )) {
-        close(source_sock);
+        close(source_socket);
         rdp_exit(EXIT_FAILURE, "Failed to bind socket");
     }
 }
@@ -266,7 +266,7 @@ void rdp_send() {
     }
     /*
     while(1) {
-        int event = listen_rdp();
+        int event = listen_rdp(TIMEOUT);
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
@@ -294,7 +294,7 @@ void rdp_sender_disconnect() {
     send_rdp("s", rdp_FIN, ++seq_number, 0, 0, 0, "");
 
     while(1) {
-        int event = listen_rdp();
+        int event = listen_rdp(TIMEOUT);
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
@@ -360,7 +360,7 @@ void rdp_reciever(
 
 void rdp_recieve() {
     while(1) {
-        int event = listen_rdp();
+        int event = listen_rdp(TIMEOUT);
         if(event == event_recieved) {
             if(rdp_flags() & rdp_SYN) {
                 stat_recieved_syn_packets++;
