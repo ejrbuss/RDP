@@ -97,7 +97,7 @@ void open_destiantion_socket() {
     memset(&destination_address, 0, sizeof(destination_address));
     destination_address.sin_family      = AF_INET;
     destination_address.sin_addr.s_addr = inet_addr(destination_ip);
-    source_address.sin_port             = htons(atoi(destination_port));
+    destination_address.sin_port             = htons(atoi(destination_port));
 }
 
 int listen_rdp(int timeout_milli) {
@@ -178,11 +178,10 @@ void send_rdp(
         payload_size,
         payload
     );
-    char* buffer = "Hello World";
     if(sendto(
         source_socket,
-        buffer,
-        strlen(buffer),
+        send_buffer,
+        strlen(send_buffer),
         0,
         (struct sockaddr*) &destination_address,
         sizeof(destination_address)
