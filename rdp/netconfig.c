@@ -59,6 +59,47 @@ char source_port[ADDR_SIZE];
 char destination_ip[ADDR_SIZE];
 char destination_port[ADDR_SIZE];
 
+void open_source_socket() {
+    rdp_log("source_ip: %s\nsource_port: %s\n", source_ip, source_port);
+    source_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (source_socket == -1) {
+        rdp_exit(EXIT_FAILURE, "Unable to create sender socket");
+    }
+    // Let go of socket on exit/crash
+    int option = 1;
+    setsockopt(
+        source_socket,
+        SOL_SOCKET,
+        SO_REUSEADDR,
+        (const void *) &option,
+        sizeof(int)
+    );
+    memset(&source_address, 0, sizeof(source_address));
+    source_address.sin_family      = AF_INET;
+    source_address.sin_addr.s_addr = inet_addr(source_ip);
+    source_address.sin_port        = htons(atoi(source_port));
+    if (-1 == bind(
+        source_socket,
+        (struct sockaddr*) &source_address,
+        sizeof(source_address)
+    )) {
+        close(source_socket);
+        rdp_exit(EXIT_FAILURE, "Failed to bind socket: %s\n", strerror(errno));
+    }
+}
+
+void open_destiantion_socket() {
+    rdp_log("destination_ip: %s\ndestination_port %s\n", destination_ip, destination_port);
+    destination_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (destination_socket == -1) {
+        rdp_exit(EXIT_FAILURE, "Unable to create reciever socket");
+    }
+    memset(&destination_address, 0, sizeof(destination_address));
+    destination_address.sin_family      = AF_INET;
+    destination_address.sin_addr.s_addr = inet_addr(destination_ip);
+    source_address.sin_port             = htons(atoi(destination_port));
+}
+
 int listen_rdp(int timeout_milli) {
     int select_result;
     ssize_t recsize;
@@ -160,47 +201,6 @@ void send_rdp(
             window_size | payload_size
         );
     }
-}
-
-void open_source_socket() {
-    rdp_log("source_ip: %s\nsource_port: %s\n", source_ip, source_port);
-    source_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (source_socket == -1) {
-        rdp_exit(EXIT_FAILURE, "Unable to create sender socket");
-    }
-    // Let go of socket on exit/crash
-    int option = 1;
-    setsockopt(
-        source_socket,
-        SOL_SOCKET,
-        SO_REUSEADDR,
-        (const void *) &option,
-        sizeof(int)
-    );
-    memset(&source_address, 0, sizeof(source_address));
-    source_address.sin_family      = AF_INET;
-    source_address.sin_addr.s_addr = inet_addr(source_ip);
-    source_address.sin_port        = htons(atoi(source_port));
-    if (-1 == bind(
-        source_socket,
-        (struct sockaddr*) &source_address,
-        sizeof(source_address)
-    )) {
-        close(source_socket);
-        rdp_exit(EXIT_FAILURE, "Failed to bind socket: %s\n", strerror(errno));
-    }
-}
-
-void open_destiantion_socket() {
-    rdp_log("destination_ip: %s\ndestination_port %s\n", destination_ip, destination_port);
-    destination_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (destination_socket == -1) {
-        rdp_exit(EXIT_FAILURE, "Unable to create reciever socket");
-    }
-    memset(&destination_address, 0, sizeof(destination_address));
-    destination_address.sin_family      = AF_INET;
-    destination_address.sin_addr.s_addr = inet_addr(destination_ip);
-    source_address.sin_port             = htons(atoi(destination_port));
 }
 
 void rdp_sender(
