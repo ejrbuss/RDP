@@ -178,6 +178,8 @@ void send_rdp(
         payload_size,
         payload
     );
+    rdp_log("Prepping packet for sending:");
+    rdp_log_hex(send_buffer);
     if(sendto(
         destination_socket,
         send_buffer,
