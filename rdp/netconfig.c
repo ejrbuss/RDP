@@ -178,9 +178,8 @@ void send_rdp(
         payload_size,
         payload
     );
-    char* buffer = "testing";
     if(sendto(
-        destination_socket,
+        source_socket,
         send_buffer,
         strlen(send_buffer),
         0,
