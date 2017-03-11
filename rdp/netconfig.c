@@ -162,7 +162,7 @@ void send_rdp(
 }
 
 void open_source_socket() {
-    rdp_log("source_ip: %s\n source_port: %s\n", source_ip, source_port);
+    rdp_log("source_ip: %s\nsource_port: %s\n", source_ip, source_port);
     source_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (source_socket == -1) {
         rdp_exit(EXIT_FAILURE, "Unable to create sender socket");
