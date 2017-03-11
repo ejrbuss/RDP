@@ -78,7 +78,7 @@ void rdp_log_packet(
     int micro = ((int) (clock() / (CLOCKS_PER_SEC / 1000000.0)))
              - (((int) (clock() / CLOCKS_PER_SEC)) * 1000000.0);
 
-    printf("%s.%06d %s %s:%s %s:%s %s %d/%d %d",
+    printf("%s.%06d %s %s:%s %s:%s %s %d/%d %d\n",
         buffer,
         micro,
         event,

@@ -107,6 +107,8 @@ int listen_rdp(int timeout_milli) {
     fd_set read_fds;
     struct timeval timeout;
 
+    rdp_log("listening...");
+
     FD_ZERO(&read_fds);
     FD_SET(source_socket, &read_fds);
     timeout.tv_sec  = 0;
