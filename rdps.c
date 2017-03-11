@@ -52,6 +52,7 @@ int main(int argc, char** argv) {
         case 2: rdp_exit(EXIT_FAILURE, "Missing required argument reciever IP\n%s", usage);
         case 3: rdp_exit(EXIT_FAILURE, "Missing required argument reciever port\n%s", usage);
         case 4: rdp_exit(EXIT_FAILURE, "Missing required argument file\n%s", usage);
+        default: break;
     }
 
     // Configure network

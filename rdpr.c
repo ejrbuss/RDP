@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     switch(arg) {
         case 0: rdp_exit(EXIT_FAILURE, "Missing required argument IP\n%s", usage);
         case 1: rdp_exit(EXIT_FAILURE, "Missing required argument port\n%s", usage);
-        case 3: rdp_exit(EXIT_FAILURE, "Missing required argument file\n%s", usage);
+        case 2: rdp_exit(EXIT_FAILURE, "Missing required argument file\n%s", usage);
         default: break;
     }
 
