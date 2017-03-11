@@ -12,7 +12,7 @@ static const char* usage =
 
 int main(int argc, char** argv) {
 
-    enum {reciever_ip, reciever_port, reciever_file_name};
+    enum {receiver_ip, receiver_port, receiver_file_name};
     char* args[4];
     int arg = 0;
     int i;
@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
     );
 
     // Open filestream
-    rdp_filestream_open(args[sender_file_name], "w");
+    rdp_filestream_open(args[receiver_file_name], "w");
     // Recieve file
     rdp_recieve();
     // Close filestream
