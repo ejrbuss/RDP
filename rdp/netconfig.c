@@ -97,7 +97,7 @@ void open_destiantion_socket() {
     memset(&destination_address, 0, sizeof(destination_address));
     destination_address.sin_family      = AF_INET;
     destination_address.sin_addr.s_addr = inet_addr(destination_ip);
-    destination_address.sin_port             = htons(atoi(destination_port));
+    destination_address.sin_port        = htons(atoi(destination_port));
 }
 
 int listen_rdp(int timeout_milli) {
@@ -111,11 +111,12 @@ int listen_rdp(int timeout_milli) {
 
     FD_ZERO(&read_fds);
     FD_SET(source_socket, &read_fds);
+
     timeout.tv_sec  = 0;
     timeout.tv_usec = timeout_milli * 1000;
 
     // Wait on select
-    select_result = select(1, &read_fds, NULL, NULL, &timeout);
+    select_result = select(source_socket + 1, &read_fds, NULL, NULL, &timeout);
 
     // Check result
     switch (select_result) {
