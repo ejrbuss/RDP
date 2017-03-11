@@ -389,7 +389,7 @@ void rdp_recieve() {
                 rdp_log("payload_size: %d", rdp_payload_size());
                 rdp_payload(buffer);
                 rdp_log("buffer_size: %s", buffer);
-                rdp_filestream_write(buffer, rdp_payload_size());
+                rdp_filestream_write(buffer, 700);
                 // read data
                 // check if we should send ack
                     // send ack
