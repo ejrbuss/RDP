@@ -181,8 +181,8 @@ void send_rdp(
     char* buffer = "testing";
     if(sendto(
         destination_socket,
-        buffer,
-        strlen(buffer),
+        send_buffer,
+        strlen(send_buffer),
         0,
         (struct sockaddr*) &destination_address,
         sizeof(destination_address)
