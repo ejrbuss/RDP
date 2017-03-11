@@ -80,6 +80,7 @@ int listen_rdp(int timeout_milli) {
             close(source_socket);
             rdp_exit(EXIT_FAILURE, "Error in select: %s\n", strerror(errno));
         case 0: return event_timeout;
+        default: break;
     }
 
     // Recieve and parse the packet
