@@ -101,7 +101,7 @@ void rdps_test() {
         char read_buffer[1000];
         char write_buffer[1000];
 
-        rdp_package(read_buffer, rdp_DAT, 12, 15, 0, strlen(payload), payload);
+        rdp_package(read_buffer, rdp_DAT, 12, 15, strlen(payload), payload);
 
         int success = rdp_parse(read_buffer);
 

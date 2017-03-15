@@ -38,7 +38,7 @@ void rdp_package(
     const char* payload
 ) {
     // Get total packet size
-    unint16_t  size = rdp_packaged_size(payload_size);
+    unint16_t  length = rdp_packaged_size(payload_size);
     char* _magic_ = "CSC361";
     // Zero the buffer
     rdp_zero(buffer, size + 1);
@@ -47,9 +47,9 @@ void rdp_package(
     memcpy(buffer + 6,  &flags,      1);
     memcpy(buffer + 7,  &seq_number, 2);
     memcpy(buffer + 9,  &ack_number, 2);
-    memcpy(buffer + 11, size,        2);
+    memcpy(buffer + 11, length,        2);
     if(flags & rdp_DAT) {
-        memcpy(buffer + header_size, payload, size);
+        memcpy(buffer + header_size, payload, length);
     }
 }
 

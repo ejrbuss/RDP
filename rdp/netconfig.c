@@ -322,7 +322,7 @@ void rdp_sender_disconnect() {
             }
         } else {
             // timeout
-            send_rdp("S", rdp_FIN, ++seq_number, 0, 0, 0, "");
+            send_rdp("S", rdp_FIN, ++seq_number, 0, 0, "");
             // resend
             // extend timer
         }
