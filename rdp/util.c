@@ -35,11 +35,12 @@ void rdp_log_hex(const char* src, int length) {
         int i;
         int j;
         for(i = 0, j = 1; i < length; i++, j++) {
-            printf(" %02x", (unsigned int) src[i]);
+            printf(" %02x", (unsigned short) src[i]);
             if(j % 4 == 0) {
                 char tmp[5];
                 rdp_zero(tmp, 5);
                 memcpy(tmp, src + i - 3, 4);
+                rdp_no_newlines(tmp);
                 printf(" | %s\n", tmp);
             }
         }
@@ -47,10 +48,20 @@ void rdp_log_hex(const char* src, int length) {
             char tmp[5];
             rdp_zero(tmp, 5);
             memcpy(tmp, src + i - 3, 4);
+            rdp_no_newlines(tmp);
             for(i = 4; i >= j % 4; i--) {
                 printf("   ");
             }
             printf(" | %s\n", tmp);
+        }
+    }
+}
+
+void rdp_no_newlines(const char* src) {
+    int i;
+    for(i = 0; i < strlen(src); i++) {
+        if(src[i] == '\n' || src[i] == ' ') {
+            src[i] = ' ';
         }
     }
 }
