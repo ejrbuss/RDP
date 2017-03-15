@@ -17,28 +17,28 @@ const char* rdp_flag_names[] = {
     "FIN/RST/DAT","ACK/FIN/RST/DAT", "SYN/FIN/RST", "SYN/ACK/FIN/RST/DAT"
 };
 
-int flags;
-int seq_number;
-int ack_number;
-int window_size;
-int payload_size;
+unint16_t  flags;
+unint16_t  seq_number;
+unint16_t  ack_number;
+unint16_t  window_size;
+unint16_t  payload_size;
 char* payload;
 
-int rdp_packaged_size(const int payload_size) {
+unint16_t rdp_packaged_size(const unint16_t  payload_size) {
     return payload_size + header_size;
 }
 
 void rdp_package(
     char* buffer,
-    const int flags,
-    const int seq_number,
-    const int ack_number,
-    const int window_size,
-    const int payload_size,
+    const unint16_t  flags,
+    const unint16_t  seq_number,
+    const unint16_t  ack_number,
+    const unint16_t  window_size,
+    const unint16_t  payload_size,
     const char* payload
 ) {
     // Get total packet size
-    int size = rdp_packaged_size(payload_size);
+    unint16_t  size = rdp_packaged_size(payload_size);
     char* _magic_ = "CSC361";
     // Zero the buffer
     rdp_zero(buffer, size + 1);
@@ -81,23 +81,23 @@ int rdp_parse(char* buffer) {
     return rdp_streq(_magic_, "CSC361");
 }
 
-int rdp_flags() {
+unint16_t  rdp_flags() {
     return flags;
 }
 
-int rdp_seq_number() {
+unint16_t  rdp_seq_number() {
     return seq_number;
 }
 
-int rdp_ack_number() {
+unint16_t  rdp_ack_number() {
     return ack_number;
 }
 
-int rdp_window_size() {
+unint16_t  rdp_window_size() {
     return window_size;
 }
 
-int rdp_payload_size() {
+unint16_t  rdp_payload_size() {
     return payload_size;
 }
 
