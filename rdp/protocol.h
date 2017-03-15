@@ -1,7 +1,9 @@
 #ifndef RDP_PROTOCOL_HEADER
 #define RDP_PROTOCOL_HEADER
 
-#include <cstdint>
+// #include <stdint.h>
+typedef unsigned char  unint8_t;
+typedef unsigned short unint16_t;
 
 #define rdp_ACK ((unint8_t) 0b00000001)
 #define rdp_SYN ((unint8_t) 0b00000010)
