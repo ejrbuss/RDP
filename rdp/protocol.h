@@ -9,8 +9,6 @@
 
 #define rdp_MAX_PACKET_SIZE 1023 // Always 0 pad just in case
 
-#include <stdint.h>
-
 extern const char* rdp_flag_names[];
 
 extern unint16_t  rdp_packaged_size(const unint16_t payload_size);

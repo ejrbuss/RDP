@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include "protocol.h"
 #include "netconfig.h"
 #include "util.h"
@@ -11,7 +12,7 @@ const char* rdp_flag_names[] = {
     "FIN",        "ACK/FIN",         "SYN/FIN",     "ACK/SYN/FIN",
     "RST",        "ACK/RST",         "SYN/RST",     "ACK/SYN/RST",
     "FIN/RST",    "ACK/FIN/RST",     "SYN/FIN/RST", "SYN/ACK/FIN/RST",
-    "DAT",        "ACK/DAT",         "SYN/DAT",     "ACK/SYN/DAT",
+    "DAT",        "ACK/DAT",         "SYN/DAT",     "ACK/SYN/DAT",ls
     "FIN/DAT",    "ACK/FIN/DAT",     "SYN/FIN/DAT", "ACK/SYN/FIN/DAT",
     "RST/DAT",    "ACK/RST/DAT",     "SYN/RST/DAT", "ACK/SYN/RST/DAT",
     "FIN/RST/DAT","ACK/FIN/RST/DAT", "SYN/FIN/RST", "SYN/ACK/FIN/RST/DAT"
