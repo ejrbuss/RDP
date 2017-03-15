@@ -1,6 +1,8 @@
 #ifndef RDP_PROTOCOL_HEADER
 #define RDP_PROTOCOL_HEADER
 
+#include <stdint.h>
+
 #define rdp_ACK ((unint8_t) 0b00000001)
 #define rdp_SYN ((unint8_t) 0b00000010)
 #define rdp_FIN ((unint8_t) 0b00000100)
