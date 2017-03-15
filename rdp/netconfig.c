@@ -51,8 +51,8 @@ struct sockaddr_in source_address;
 int destination_socket;
 struct sockaddr_in destination_address;
 
-int seq_number;
-int ack_number;
+int seq;
+int ack;
 
 char source_ip[ADDR_SIZE];
 char source_port[ADDR_SIZE];
@@ -232,7 +232,7 @@ void rdp_sender_connect() {
     // SEND SYN packet
 
     // init seq number
-    seq_number = rdp_get_seq_number();
+    seq = rdp_get_seq_number();
 
     send_rdp("s", rdp_SYN, seq_number, 0, 0, "");
 
@@ -241,21 +241,21 @@ void rdp_sender_connect() {
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
-                if(rdp_ack_number() == seq_number + 1) { // Check sequence number
-                    seq_number++;
+                if(rdp_ack_number() == seq + 1) { // Check sequence number
+                    seq++;
                     return;
                 }
-                send_rdp("S", rdp_SYN, seq_number, 0, 0, "");
+                send_rdp("S", rdp_SYN, seq, 0, 0, "");
             } else if(rdp_flags() & rdp_RST) {
                 stat_recieved_rst_packets++;
-                send_rdp("S", rdp_SYN, seq_number, 0, 0, "");
+                send_rdp("S", rdp_SYN, seq, 0, 0, "");
             } else {
                 rdp_log("Unkown packet:");
                 rdp_log_hex(recieve_buffer, rdp_packaged_size(rdp_payload_size()));
             }
         } else {
             // timeout
-            send_rdp("S", rdp_SYN, seq_number, 0, 0, send_buffer);
+            send_rdp("S", rdp_SYN, seq, 0, 0, send_buffer);
             // resend
             // extend timer
         }
@@ -301,22 +301,22 @@ void rdp_send() {
 void rdp_sender_disconnect() {
 
     // SEND FIN packet
-    send_rdp("s", rdp_FIN, ++seq_number, 0, 0, "");
+    send_rdp("s", rdp_FIN, ++seq, 0, 0, "");
 
     while(1) {
         int event = listen_rdp(TIMEOUT);
-        rdp_log("seq: %d\n", seq_number);
+        rdp_log("seq: %d\n", seq);
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
-                rdp_log("seq: %d\nack: %d\n", seq_number, rdp_ack_number());
-                if(rdp_ack_number() == seq_number + 1) {
+                rdp_log("seq: %d\nack: %d\n", seq, rdp_ack_number());
+                if(rdp_ack_number() == seq + 1) {
                     return;
                 }
-                send_rdp("S", rdp_FIN, ++seq_number, 0, 0, "");
+                send_rdp("S", rdp_FIN, ++seq, 0, 0, "");
             } else if(rdp_flags() & rdp_RST) {
                 stat_recieved_rst_packets++;
-                send_rdp("S", rdp_FIN, ++seq_number, 0, 0, "");
+                send_rdp("S", rdp_FIN, ++seq, 0, 0, "");
                 // try again
             } else {
                 rdp_log("Unkown packet:");
@@ -324,7 +324,7 @@ void rdp_sender_disconnect() {
             }
         } else {
             // timeout
-            send_rdp("S", rdp_FIN, ++seq_number, 0, 0, "");
+            send_rdp("S", rdp_FIN, ++seq, 0, 0, "");
             // resend
             // extend timer
         }
