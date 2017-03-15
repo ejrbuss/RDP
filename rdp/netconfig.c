@@ -170,11 +170,10 @@ int listen_rdp(int timeout_milli) {
 
 void send_rdp(
     const char* event,
-    const int flags,
-    const int seq_number,
-    const int ack_number,
-    const int window_size,
-    const int payload_size,
+    const unint16_t flags,
+    const unint16_t seq_number,
+    const unint16_t ack_number,
+    const unint16_t size
     const char* payload
 ) {
     rdp_package(
@@ -206,7 +205,7 @@ void send_rdp(
             rdp_flag_names[flags],
             seq_number,
             ack_number,
-            window_size | payload_size
+            size
         );
     }
 }
@@ -236,7 +235,7 @@ void rdp_sender_connect() {
     // init seq number
     int seq = rdp_get_seq_number();
 
-    send_rdp("s", rdp_SYN, seq, 0, 0, 0, "");
+    send_rdp("s", rdp_SYN, seq, 0, 0, "");
 
     while(1) {
         int event = listen_rdp(TIMEOUT);
@@ -247,17 +246,17 @@ void rdp_sender_connect() {
                     seq++;
                     return;
                 }
-                send_rdp("S", rdp_SYN, seq, 0, 0, 0, "");
+                send_rdp("S", rdp_SYN, seq, 0, 0, "");
             } else if(rdp_flags() & rdp_RST) {
                 stat_recieved_rst_packets++;
-                send_rdp("S", rdp_SYN, seq, 0, 0, 0, "");
+                send_rdp("S", rdp_SYN, seq, 0, 0, "");
             } else {
                 rdp_log("Unkown packet:");
                 rdp_log_hex(recieve_buffer, rdp_packaged_size(rdp_payload_size()));
             }
         } else {
             // timeout
-            send_rdp("S", rdp_SYN, seq, 0, 0, 0, send_buffer);
+            send_rdp("S", rdp_SYN, seq, 0, 0, send_buffer);
             // resend
             // extend timer
         }
@@ -274,7 +273,7 @@ void rdp_send() {
     for(i = 0; i < size; i += 700) {
         char payload[701];
         rdp_filestream_read(payload, 700, i);
-        send_rdp("s", rdp_DAT, 0, 0, 0, 700, payload);
+        send_rdp("s", rdp_DAT, 0, 0, 700, payload);
     }
     /*
     while(1) {
@@ -303,7 +302,7 @@ void rdp_send() {
 void rdp_sender_disconnect() {
 
     // SEND FIN packet
-    send_rdp("s", rdp_FIN, ++seq_number, 0, 0, 0, "");
+    send_rdp("s", rdp_FIN, ++seq_number, 0, 0, "");
 
     while(1) {
         int event = listen_rdp(TIMEOUT);
@@ -313,10 +312,10 @@ void rdp_sender_disconnect() {
                 if(1) {//rdp_seq_number() == seq_number + 1) {
                     return;
                 }
-                send_rdp("S", rdp_FIN, ++seq_number, 0, 0, 0, "");
+                send_rdp("S", rdp_FIN, ++seq_number, 0, 0, "");
             } else if(rdp_flags() & rdp_RST) {
                 stat_recieved_rst_packets++;
-                send_rdp("S", rdp_FIN, ++seq_number, 0, 0, 0, "");
+                send_rdp("S", rdp_FIN, ++seq_number, 0, 0, "");
                 // try again
             } else {
                 rdp_log("Unkown packet:");
@@ -342,7 +341,7 @@ void rdp_sender_stats() {
         "RST packets sent: %d\n"
         "ACK packets received: %d\n"
         "RST packets received: %d\n"
-        "total time duration (second): %d",
+        "total time duration (second): %d\n",
         stat_sent_total_bytes,
         stat_sent_unique_bytes,
         stat_sent_dat_packets,
@@ -376,10 +375,10 @@ void rdp_recieve() {
         if(event == event_recieved) {
             if(rdp_flags() & rdp_SYN) {
                 stat_recieved_syn_packets++;
-                send_rdp("s", rdp_ACK, rdp_seq_number() + 1, 0, 0, 0, "");
+                send_rdp("s", rdp_ACK, rdp_seq_number() + 1, 0, 0, "");
             } else if(rdp_flags() & rdp_FIN) {
                 stat_recieved_fin_packets++;
-                send_rdp("s", rdp_ACK, rdp_seq_number() + 1, 0, 0, 0, "");
+                send_rdp("s", rdp_ACK, rdp_seq_number() + 1, 0, 0, "");
                 return;
                 // send ack
                 // return
