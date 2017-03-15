@@ -301,15 +301,15 @@ void rdp_send() {
 void rdp_sender_disconnect() {
 
     // SEND FIN packet
-    send_rdp("s", rdp_FIN, seq_number, 0, 0, "");
-    seq_number++;
+    send_rdp("s", rdp_FIN, ++seq_number, 0, 0, "");
 
     while(1) {
         int event = listen_rdp(TIMEOUT);
+        rdp_log("seq: %d\n", seq_number);
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
-                printf("seq: %d\nack: %d\n", seq_number, rdp_ack_number());
+                rdp_log("seq: %d\nack: %d\n", seq_number, rdp_ack_number());
                 if(rdp_ack_number() == seq_number + 1) {
                     return;
                 }
