@@ -181,8 +181,7 @@ void send_rdp(
         flags,
         seq_number,
         ack_number,
-        window_size,
-        payload_size,
+        size,
         payload
     );
     if(sendto(
