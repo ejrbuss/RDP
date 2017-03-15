@@ -375,10 +375,10 @@ void rdp_recieve() {
         if(event == event_recieved) {
             if(rdp_flags() & rdp_SYN) {
                 stat_recieved_syn_packets++;
-                send_rdp("s", rdp_ACK, rdp_seq_number() + 1, 0, 0, "");
+                send_rdp("s", rdp_ACK, 0, rdp_seq_number() + 1, 0, "");
             } else if(rdp_flags() & rdp_FIN) {
                 stat_recieved_fin_packets++;
-                send_rdp("s", rdp_ACK, rdp_seq_number() + 1, 0, 0, "");
+                send_rdp("s", rdp_ACK, 0, rdp_seq_number() + 1, 0, "");
                 return;
                 // send ack
                 // return
