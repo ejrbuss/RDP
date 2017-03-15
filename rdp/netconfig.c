@@ -308,7 +308,7 @@ void rdp_sender_disconnect() {
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
-                 printf("seq: %d\nack: %d\n", seq, rdp_seq_number());
+                 printf("seq: %d\nack: %d\n", seq_number, rdp_seq_number());
                 if(rdp_ack_number() == seq_number + 1) {
                     return;
                 }
