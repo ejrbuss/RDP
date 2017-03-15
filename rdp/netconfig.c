@@ -188,7 +188,7 @@ void send_rdp(
     if(sendto(
         source_socket,
         send_buffer,
-        strlen(send_buffer),
+        rdp_packaged_size(flags & rdp_DAT ? size : 0),
         0,
         (struct sockaddr*) &destination_address,
         sizeof(destination_address)

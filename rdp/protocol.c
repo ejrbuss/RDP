@@ -34,8 +34,7 @@ void rdp_package(
     const unint16_t  flags,
     const unint16_t  seq_number,
     const unint16_t  ack_number,
-    const unint16_t  window_size,
-    const unint16_t  payload_size,
+    const unint16_t  size,
     const char* payload
 ) {
     // Get total packet size
@@ -44,15 +43,13 @@ void rdp_package(
     // Zero the buffer
     rdp_zero(buffer, size + 1);
     // Serialize
-    memcpy(buffer + 0, _magic_,        6);
-    memcpy(buffer + 6,  &flags,        1);
-    memcpy(buffer + 7,  &seq_number,   2);
-    memcpy(buffer + 9,  &ack_number,   2);
+    memcpy(buffer + 0, _magic_,      6);
+    memcpy(buffer + 6,  &flags,      1);
+    memcpy(buffer + 7,  &seq_number, 2);
+    memcpy(buffer + 9,  &ack_number, 2);
+    memcpy(buffer + 11, size,        2);
     if(flags & rdp_DAT) {
-        memcpy(buffer + 11, &payload_size, 2);
-        memcpy(buffer + header_size, payload, payload_size);
-    } else {
-        memcpy(buffer + 11, &window_size,  2);
+        memcpy(buffer + header_size, payload, size);
     }
 }
 
