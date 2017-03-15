@@ -234,7 +234,7 @@ void rdp_sender_connect() {
     // init seq number
     seq = rdp_get_seq_number();
 
-    send_rdp("s", rdp_SYN, seq_number, 0, 0, "");
+    send_rdp("s", rdp_SYN, seq, 0, 0, "");
 
     while(1) {
         int event = listen_rdp(TIMEOUT);
