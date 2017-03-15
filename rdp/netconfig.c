@@ -165,7 +165,7 @@ int listen_rdp(int timeout_milli) {
 
     char buffer[3000];
     rdp_payload(buffer);
-    rdp_log("==========================Recieved:\n=======================\n%s\n\n========================", buffer);
+    rdp_log("=======================\nRecieved:\n=======================\n%s\n=======================", buffer);
 
     return event_recieved;
 }
@@ -255,7 +255,7 @@ void rdp_sender_connect() {
                 send_rdp("S", rdp_SYN, seq, 0, 0, 0, "");
             } else {
                 rdp_log("Unkown packet:");
-                rdp_log_hex(recieve_buffer);
+                rdp_log_hex(recieve_buffer, rdp_packaged_size());
             }
         } else {
             // timeout
@@ -291,7 +291,7 @@ void rdp_send() {
                 // try again
             } else {
                 rdp_log("Unkown packet:");
-                rdp_log_hex(recieve_buffer);
+                rdp_log_hex(recieve_buffer, rdp_payload_size());
             }
         } else {
             // timeout
@@ -322,7 +322,7 @@ void rdp_sender_disconnect() {
                 // try again
             } else {
                 rdp_log("Unkown packet:");
-                rdp_log_hex(recieve_buffer);
+                rdp_log_hex(recieve_buffer, rdp_payload_size());
             }
         } else {
             // timeout
@@ -400,7 +400,7 @@ void rdp_recieve() {
                     // send ack
             } else {
                 rdp_log("Unkown packet:");
-                rdp_log_hex(recieve_buffer);
+                rdp_log_hex(recieve_buffer, rdp_payload_size());
             }
         } else {
             // timeout

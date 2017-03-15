@@ -30,11 +30,11 @@ void rdp_log(const char *fmt, ...) {
     }
 }
 
-void rdp_log_hex(const char* src) {
+void rdp_log_hex(const char* src, int length) {
     if(DEBUG) {
         int i;
         int j;
-        for(i = 0, j = 1; i < strlen(src); i++, j++) {
+        for(i = 0, j = 1; i < length; i++, j++) {
             printf(" %02x", (unsigned int) src[i]);
             if(j % 4 == 0) {
                 char tmp[5];

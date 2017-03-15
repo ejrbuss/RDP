@@ -58,6 +58,7 @@ void rdp_package(
 
 int rdp_parse(char* buffer) {
 
+    rdp_zero(buffer, rdp_MAX_PACKET_SIZE + 1);
     char _magic_[7];
     rdp_zero(_magic_, 7);
     flags        = 0;

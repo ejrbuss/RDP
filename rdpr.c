@@ -138,6 +138,6 @@ void rdps_test() {
     }
     // Test log hex
     {
-        rdp_log_hex("Hello World!!! How are you doing today :)");
+        rdp_log_hex("Hello World!!! How are you doing today :)", 24);
     }
 }
