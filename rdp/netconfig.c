@@ -162,6 +162,11 @@ int listen_rdp(int timeout_milli) {
         rdp_ack_number(),
         rdp_window_size() | rdp_payload_size()
     );
+
+    char buffer[3000];
+    rdp_payload(buffer);
+    rdp_log("==========================Recieved:\n=======================\n%s\n\n========================", buffer);
+
     return event_recieved;
 }
 
