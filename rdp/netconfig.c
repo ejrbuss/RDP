@@ -128,6 +128,7 @@ int listen_rdp(int timeout_milli) {
         default: break;
     }
 
+    rdp_zero(recieve_buffer, rdp_MAX_PACKET_SIZE + 1);
     // Recieve and parse the packet
     recsize = recvfrom(
         source_socket,
