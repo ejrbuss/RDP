@@ -173,7 +173,7 @@ void send_rdp(
     const unint16_t flags,
     const unint16_t seq_number,
     const unint16_t ack_number,
-    const unint16_t size
+    const unint16_t size,
     const char* payload
 ) {
     rdp_package(
