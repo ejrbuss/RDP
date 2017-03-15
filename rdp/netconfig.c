@@ -241,7 +241,6 @@ void rdp_sender_connect() {
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
-                printf("seq: %d\nack: %d\n", seq, rdp_seq_number());
                 if(rdp_ack_number() == seq + 1) { // Check sequence number
                     seq++;
                     return;
@@ -309,7 +308,7 @@ void rdp_sender_disconnect() {
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
-                if(rdp_seq_number() == seq_number + 1) {
+                if(rdp_ack_number() == seq_number + 1) {
                     return;
                 }
                 send_rdp("S", rdp_FIN, ++seq_number, 0, 0, "");
