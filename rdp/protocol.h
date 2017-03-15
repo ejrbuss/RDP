@@ -21,7 +21,7 @@ extern void rdp_package(
     const unint16_t flags,
     const unint16_t seq_number,
     const unint16_t ack_number,
-    const unint16_t size
+    const unint16_t size,
     const char* payload
 );
 extern int rdp_parse(char* buffer);
