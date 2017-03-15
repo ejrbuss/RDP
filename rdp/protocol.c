@@ -47,7 +47,7 @@ void rdp_package(
     memcpy(buffer + 6,  &flags,      1);
     memcpy(buffer + 7,  &seq_number, 2);
     memcpy(buffer + 9,  &ack_number, 2);
-    memcpy(buffer + 11, size,        2);
+    memcpy(buffer + 11, &size,       2);
     if(flags & rdp_DAT) {
         memcpy(buffer + header_size, payload, length);
     }
