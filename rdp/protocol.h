@@ -18,7 +18,7 @@ extern const char* rdp_flag_names[];
 extern unint16_t  rdp_packaged_size(const unint16_t payload_size);
 extern void rdp_package(
     char* buffer,
-    const unint16_t flags,
+    const unint8_t flags,
     const unint16_t seq_number,
     const unint16_t ack_number,
     const unint16_t size,

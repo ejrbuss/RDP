@@ -232,30 +232,30 @@ void rdp_sender_connect() {
     // SEND SYN packet
 
     // init seq number
-    int seq = rdp_get_seq_number();
+    seq_number = rdp_get_seq_number();
 
-    send_rdp("s", rdp_SYN, seq, 0, 0, "");
+    send_rdp("s", rdp_SYN, seq_number, 0, 0, "");
 
     while(1) {
         int event = listen_rdp(TIMEOUT);
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
                 stat_recieved_ack_packets++;
-                if(rdp_ack_number() == seq + 1) { // Check sequence number
-                    seq++;
+                if(rdp_ack_number() == seq_number + 1) { // Check sequence number
+                    seq_number++;
                     return;
                 }
-                send_rdp("S", rdp_SYN, seq, 0, 0, "");
+                send_rdp("S", rdp_SYN, seq_number, 0, 0, "");
             } else if(rdp_flags() & rdp_RST) {
                 stat_recieved_rst_packets++;
-                send_rdp("S", rdp_SYN, seq, 0, 0, "");
+                send_rdp("S", rdp_SYN, seq_number, 0, 0, "");
             } else {
                 rdp_log("Unkown packet:");
                 rdp_log_hex(recieve_buffer, rdp_packaged_size(rdp_payload_size()));
             }
         } else {
             // timeout
-            send_rdp("S", rdp_SYN, seq, 0, 0, send_buffer);
+            send_rdp("S", rdp_SYN, seq_number, 0, 0, send_buffer);
             // resend
             // extend timer
         }

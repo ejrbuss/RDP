@@ -31,7 +31,7 @@ unint16_t rdp_packaged_size(const unint16_t  payload_size) {
 
 void rdp_package(
     char* buffer,
-    const unint16_t  flags,
+    const unint8_t  flags,
     const unint16_t  seq_number,
     const unint16_t  ack_number,
     const unint16_t  size,
