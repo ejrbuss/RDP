@@ -301,7 +301,8 @@ void rdp_send() {
 void rdp_sender_disconnect() {
 
     // SEND FIN packet
-    send_rdp("s", rdp_FIN, ++seq_number, 0, 0, "");
+    send_rdp("s", rdp_FIN, seq_number, 0, 0, "");
+    seq_number++;
 
     while(1) {
         int event = listen_rdp(TIMEOUT);
