@@ -330,7 +330,7 @@ void rdp_sender_disconnect() {
 
     int reset_count   = 0;
     int timeout_count = 0;
-    int timeout = TIMEOUT;
+    int timeout = TIMEOUT / 2;
 
     send_rdp("s", rdp_FIN, sequence_number, 0, "");
 
@@ -412,11 +412,12 @@ void rdp_recieve() {
     char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
     int sequence_numbers[WINDOW_SIZE];
 
-    int reset_count   = 0;
-    int timeout_count = 0;
-    int timeout       = TIMEOUT;
-    int connected     = 0;
-    int disconnecting = 0;
+    int recieved_packets = 0;
+    int reset_count      = 0;
+    int timeout_count    = 0;
+    int timeout          = TIMEOUT;
+    int connected        = 0;
+    int disconnecting    = 0;
 
     unint16_t window_size = WINDOW_SIZE;
     unint16_t ack_number  = 0;
@@ -464,6 +465,7 @@ void rdp_recieve() {
                         }
                     } else if(window_size == 0) {
                         send_rdp("s", rdp_ACK, ack_number, window_size, "");
+                        break;
                     } else {
                         // Queue data
                         for(i = 0; i < WINDOW_SIZE; i++) {
@@ -475,7 +477,8 @@ void rdp_recieve() {
                                 break;
                             }
                         }
-                        if(--window_size == 0) {
+                        if(--window_size == 0 || ++recieved_packets > WINDOW_SIZE) {
+                            recieved_packets = 0;
                             send_rdp("s", rdp_ACK, ack_number, window_size, "");
                         }
                     }
@@ -487,7 +490,6 @@ void rdp_recieve() {
                 } else {
                     rdp_log("Unexpected packet!");
                 }
-                // MAGIC
                 break;
             }
             case event_bad_packet: {
@@ -499,7 +501,8 @@ void rdp_recieve() {
             case event_timeout: {
                 rdp_log("Timed out! %d", disconnecting);
                 if(connected) {
-                    // MAGIC
+                    recieved_packets = 0;
+                    send_rdp("s", rdp_ACK, ack_number, window_size, "");
                 }
                 if(disconnecting) {
                     return;
