@@ -498,6 +498,7 @@ void rdp_recieve() {
                 break;
             }
             case event_timeout: {
+                rdp_log("Timed out! %d", disconnecting);
                 if(connected) {
                     // MAGIC
                 }
