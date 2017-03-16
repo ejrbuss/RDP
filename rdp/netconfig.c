@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include "filestream.h"
 #include "netconfig.h"
 #include "protocol.h"
 #include "util.h"
@@ -16,6 +17,7 @@
 #define TIMEOUT          500
 #define MAXIMUM_TIMEOUTS 5
 #define MAXIMUM_RESETS   5
+#define WINDOW_SIZE      10
 
 /* Stat tracking */
 int stat_sent_total_bytes             = 0;
@@ -49,8 +51,7 @@ struct sockaddr_in source_address;
 int destination_socket;
 struct sockaddr_in destination_address;
 
-int sequence_number;
-int ack;
+unint16_t sequence_number;
 
 char source_ip[ADDR_SIZE];
 char source_port[ADDR_SIZE];
@@ -405,36 +406,104 @@ void rdp_reciever(
 
 void rdp_recieve() {
     while(1) {
+        char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
+        int sequence_numbers[WINDOW_SIZE];
 
-        int connected = 0;
-        int event     = listen_rdp(TIMEOUT);
+        int reset_count   = 0;
+        int timeout_count = 0;
+        int timeout       = 0;
+        int connected     = 0;
+        int disconnecting = 0;
 
-        if(event == event_recieved) {
-            if(rdp_flags() & rdp_SYN) {
-                send_rdp("s", rdp_ACK, rdp_seq_ack_number() + 1, 0, "");
-            } else if(rdp_flags() & rdp_FIN) {
-                send_rdp("s", rdp_ACK, rdp_seq_ack_number() + 1, 0, "");
-                return;
-                // send ack
-                // return
-            } else if(rdp_flags() & rdp_RST) {
-                // try again
-            } else if(rdp_flags() & rdp_DAT) {
-                rdp_filestream_write(rdp_payload(), 700);
-                // read data
-                // check if we should send ack
-                    // send ack
-            } else {
-                rdp_log("Unkown packet:");
-                rdp_log_hex(recieve_buffer, rdp_size());
+        unint16_t window_size = WINDOW_SIZE:
+        unint16_t ack_number  = 0;
+
+        int i;
+        for(i = 0; i < WINDOW_SIZE; i++) {
+            sequence_numbers[i] = -1; // Mark as available
+        }
+
+        switch(listen_rdp(timeout)) {
+            case event_recieved: {
+                if(rdp_flags() & rdp_SYN) {
+                    connected  = 1;
+                    ack_number = rdp_seq_ack_number() + 1;
+                    send_rdp("s", rdp_ACK, ack_number, window_size, "");
+                } else if(rdp_flags() & rdp_FIN) {
+                    disconnecting = 1;
+                    ack_number    = rdP-seq_ack_number();
+                    send_rdp("s", rdp_ACK, ack_number, window_size, "");
+                } else if(rdp_flags() & rdp_DAT) {
+
+                    // In order check
+                    if(rdp_seq_ack_number() == ack_number) {
+
+                        rdp_filestream_write(rdp_payload(), rdp_payload_size());
+                        ack_number += rdp_payload_size();
+
+                        // Dequeue data
+                        if(window_size != WINDOW_SIZE) {
+                            int dequeue = 0;
+                            do {
+                                for(i = 0; i < WINDOW_SIZE; i++) {
+                                    if(sequence_numbers[i] == ack_number) {
+
+                                        char* payload = payload_buffer + (i * rdp_MAX_PACKET_SIZE);
+                                        rdp_filestream_write(payload, strlen(payload));
+                                        ack_number         += strlen(payload);
+                                        sequence_numbers[i] = -1;
+                                        dequeue             = 1;
+                                        window_size++;
+                                    }
+                                }
+                            } while(deque);
+                        }
+                    } else if(window_size == 0) {
+                        send_rdp("s", rdp_ACK, ack_number, window_size, "");
+                    } else {
+                        // Queue data
+                        for(i = 0; i < WINDOW_SIZE; i++) {
+                            if(sequence_numbers[i] == -1) {
+                                sequence_number[i] = rdp_seq_ack_number();
+                                rdp_zero(payload_buffer + (i * rdp_MAX_PACKET_SIZE), rdp_MAX_PACKET_SIZE);
+                                memcpy(payload_buffer + (i * rdp_MAX_PACKET_SIZE), &payload, rdp_payload_size());
+                                break;
+                            }
+                        }
+                        if(--window_size == 0) {
+                            send_rdp("s", rdp_ACK, ack_number, window_size, "");
+                        }
+                    }
+
+                    char* payload = rdp_payload();
+
+                    for()
+                } else if(rdp_flags() & rdp_RST {
+                    timeout_count = 0;
+                    if(reset_count++ > MAXIMUM_RESETS) {
+                        rdp_exit(EXIT_FAILURE, "RDP transmission failed as the connection was reset too many times.");
+                    }
+                } else {
+                    rdp_log("Unexpected packet!");
+                }
+                // MAGIC
+                break;
             }
-        } else {
-            if(connected) {
-
+            case event_bad_packet: {
+                if(connected) {
+                    send_rdp("s", rdp_ACK, ack_number, window_size, "");
+                }
+                break;
             }
-            // timeout
-            // if connected
-                // send ack
+            case event_timeout: {
+                if(connected) {
+                    // MAGIC
+                }
+                if(disconnecting) {
+                    return;
+                }
+                break;
+            }
         }
     }
 }
