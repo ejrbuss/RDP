@@ -136,13 +136,15 @@ unint16_t rdp_checksum(
     rdp_log("payl: %s\n", payload);
 
     char buffer[rdp_MAX_PACKET_SIZE];
-    char* _magic_ = "CSC361";
+    char* _magic_    = "CSC361";
+    int payload_size = 0;
 
     memcpy(buffer + 0, _magic_,         6);
     memcpy(buffer + 6, &flags,          1);
     memcpy(buffer + 7, &seq_ack_number, 2);
     memcpy(buffer + 9, &size,           2);
     if(flags & rdp_DAT) {
+        payload_size = size - 2;
         memcpy(buffer + HEADER_SIZE - 2, payload, size);
     };
 
@@ -150,7 +152,7 @@ unint16_t rdp_checksum(
     unint16_t word = 0;
 
     int i;
-    for(i = 0; i < rdp_packed_size(size - 2) / 2; i++) {
+    for(i = 0; i < rdp_packed_size(payload_size) / 2; i++) {
         memcpy(&word, buffer + (i * 2), 2);
         sum += word;
         rdp_log("%d", sum);
