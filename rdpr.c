@@ -41,7 +41,8 @@ int main(int argc, char** argv) {
             rdp_debug(); continue;
         }
         if(rdp_opt_cmp("-t") || rdp_opt_cmp("--test")) {
-            rdps_test(); exit(EXIT_SUCCESS);
+            //rdps_test();
+            exit(EXIT_SUCCESS);
         }
         rdp_log("found arg: %s", argv[i]);
         args[arg++] = argv[i];
