@@ -270,11 +270,11 @@ void rdp_sender_connect() {
                 send_rdp("S", rdp_SYN, sequence_number, 0, "");
                 break;
             }
-            case timeout: {
+            case event_timeout: {
                 timeout = (int) timeout * 1.1;
                 timeout_count++;
                 if(timeout_count > MAXIMUM_TIMEOUTS) {
-                    rdp_exit(EXIT_FAILURE, 'RDP transimmision as the connection timed out too many times.');
+                    rdp_exit(EXIT_FAILURE, "RDP transimmision as the connection timed out too many times.");
                 }
                 rdp_log("Request timed out. Retrying...");
                 send_rdp("S", rdp_SYN, sequence_number, 0, "");
