@@ -106,8 +106,6 @@ int rdp_parse(char* buffer) {
 
     // Valdiate header
     //return
-    rdp_log("actual checksum: %d", checksum);
-    rdp_log("calc checksum: %d", rdp_checksum(flags, seq_ack_number, payload_size, payload));
         rdp_streq(_magic_, "CSC361") &&
         rdp_checksum(flags, seq_ack_number, payload_size, payload) == checksum;
     return 1;
@@ -126,6 +124,11 @@ unint16_t rdp_checksum(
     const unint16_t size,
     const char* payload
 ) {
+    rdp_log("flags: %d", flags);
+    rdp_log("seq:  %d", seq_ack_number);
+    rdp_log("size: %d", size);
+    rdp_log("payl: %s", payl);
+
     char buffer[rdp_MAX_PACKET_SIZE];
     char* _magic_ = "CSC361";
 
