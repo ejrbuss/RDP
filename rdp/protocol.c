@@ -54,7 +54,7 @@ char* rdp_pack(
     const char* payload
 ) {
     // Get total packet size
-    unint16_t checksum = 0;
+    unint16_t checksum = rdp_checksum(flags, seq_ack_number, size, payload);
     char* _magic_ = "CSC361";
     // Zero the buffer
     rdp_zero(buffer, size + 1);
@@ -63,11 +63,10 @@ char* rdp_pack(
     memcpy(buffer + 6, &flags,          1);
     memcpy(buffer + 7, &seq_ack_number, 2);
     memcpy(buffer + 9, &size,           2);
+    memcpy(buffer + 11, &checksum, 2);
     if(flags & rdp_DAT) {
         memcpy(buffer + HEADER_SIZE, payload, size);
     }
-    checksum = rdp_checksum(buffer, rdp_packed_size(size));
-    memcpy(buffer + 11, &checksum, 2);
     // Return packed buffer
     return buffer;
 }
@@ -105,18 +104,10 @@ int rdp_parse(char* buffer) {
     }
     size = rdp_packed_size(payload_size);
 
-    // validate header
-    if(rdp_streq(_magic_, "CSC361")) {
-        unint16_t zero = 0;
-        char buffer[rdp_MAX_PACKET_SIZE];
-        rdp_pack(buffer, flags, seq_ack_number, size, payload);
-        memcpy(buffer + 11, &zero, 2);
-        rdp_log("calculated checksum: %d", rdp_checksum(buffer, rdp_packed_size(size)));
-        rdp_log("actual checksum: %d", checksum);
-        checksum == rdp_checksum(buffer, rdp_packed_size(size));
-        return 1;
-    }
-    return 0;
+    // Valdiate header
+    return
+        rdp_streq(_magic_, "CSC361") &&
+        rdp_checksum(flags, seq_ack_number, size, payload) == checksum;
 }
 
 /**
@@ -126,13 +117,27 @@ int rdp_parse(char* buffer) {
  * @param   const unint16_t length the length of the buffer
  * @returns unint16_t              checksum of the buffer
  */
-unint16_t rdp_checksum(const char* buffer, const unint16_t length) {
+unint16_t rdp_checksum(
+    const unint8_t flags,
+    const unint16_t seq_ack_number,
+    const unint16_t size,
+    const char* payload
+) {
+    char buffer[rdp_MAX_PACKET_SIZE];
+
+    memcpy(buffer + 0, _magic_,         6);
+    memcpy(buffer + 6, &flags,          1);
+    memcpy(buffer + 7, &seq_ack_number, 2);
+    memcpy(buffer + 9, &size,           2);
+    if(flags & rdp_DAT) {
+        memcpy(buffer + HEADER_SIZE - 2, payload, size);
+    }
 
     unint16_t sum  = 0;
     unint16_t word = 0;
 
     int i;
-    for(i = 0; i < length / 2; i++) {
+    for(i = 0; i < rdp_packed_size(size - 2) / 2; i++) {
         memcpy(&word, buffer + (i * 2), 2);
         sum += word;
     }
