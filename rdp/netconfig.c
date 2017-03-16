@@ -409,9 +409,10 @@ void rdp_recieve() {
         char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
         int sequence_numbers[WINDOW_SIZE];
 
+
         int reset_count   = 0;
         int timeout_count = 0;
-        int timeout       = 0;
+        int timeout       = TIMEOUT;
         int connected     = 0;
         int disconnecting = 0;
 
