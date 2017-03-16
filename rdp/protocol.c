@@ -41,7 +41,7 @@ unint16_t rdp_packed_size(const unint16_t payload_size) {
  *
  * @param   char*           buffer         a buffer to pack
  * @param   const unint16_t flags          flag byte
- * @param   const unint16_t seq_ack_number sequence of flag number
+ * @param   const unint16_t seq_ack_number sequence or acknowledgement number
  * @param   const unint16_t size           paylod or window size number
  * @param   const char*     payload        a buffer containing the payload
  * @returns char*                          a pointer to the packed buffer
@@ -111,11 +111,13 @@ int rdp_parse(char* buffer) {
 }
 
 /**
- * Returns a checksum for a buffer.
+ * Returns a checksum for a packet.
  *
- * @param   const char*     buffer the buffer to checksum
- * @param   const unint16_t length the length of the buffer
- * @returns unint16_t              checksum of the buffer
+ * @param   const unint8_t  flags          flag byte
+ * @param   const unint16_t seq_ack_number sequence or acknowledgement number
+ * @param   const unint16_t size           payload or window size number
+ * @param   const char*     payload        a buffer containing the payload
+ * @returns unint16_t                      checksum of the buffer
  */
 unint16_t rdp_checksum(
     const unint8_t flags,
@@ -123,12 +125,6 @@ unint16_t rdp_checksum(
     const unint16_t size,
     const char* payload
 ) {
-    rdp_log("=========");
-    rdp_log("flags: %d", flags);
-    rdp_log("seq:  %d", seq_ack_number);
-    rdp_log("size: %d", size);
-    rdp_log("payl: %s", payload);
-    rdp_log("=========");
 
     char buffer[rdp_MAX_PACKET_SIZE];
     char* _magic_ = "CSC361";
@@ -148,10 +144,7 @@ unint16_t rdp_checksum(
     for(i = 0; i < rdp_packed_size(size - 2) / 2; i++) {
         memcpy(&word, buffer + (i * 2), 2);
         sum += word;
-        rdp_log("%d", sum);
     }
-    rdp_log("%d", ~sum);
-    rdp_log("=========");
     return ~sum;
 }
 

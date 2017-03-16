@@ -15,8 +15,6 @@
 #define ADDR_SIZE        200
 #define TIMEOUT          500
 
-int maximum_rst_attempts = 5;
-
 /* Stat tracking */
 int stat_sent_total_bytes             = 0;
 int stat_sent_unique_bytes            = 0;
@@ -49,7 +47,8 @@ struct sockaddr_in source_address;
 int destination_socket;
 struct sockaddr_in destination_address;
 
-int seq;
+int maximum_rst_attempts = 5;
+int sequence_number;
 int ack;
 
 char source_ip[ADDR_SIZE];
@@ -238,33 +237,49 @@ void rdp_sender(
 
 void rdp_sender_connect() {
 
-    // SEND SYN packet
+    sequence_number = rdp_get_seq_number();
+    int timeout_count = 0;
+    int timeout       = 1000;
 
-    // init seq number
-    seq = rdp_get_seq_number();
-
+    rdp_log("Establishing connection...");
     send_rdp("s", rdp_SYN, seq, 0, "");
 
     while(1) {
-        int event = listen_rdp(TIMEOUT);
-        if(event == event_recieved) {
-            if(rdp_flags() & rdp_ACK) {
-                if(rdp_seq_ack_number() == seq + 1) { // Check sequence number
-                    seq++;
-                    return;
+        switch(listen_rdp(timeout)) {
+            case event_recieved: {
+                if(rdp_flags() & rdp_ACK) {
+                    if(rdp_seq_ack_number() == seq + 1) {
+                        seq++;
+                        return;
+                    }
+                    send_rdp("S", rdp_SYN, seq, 0, "");
                 }
-                send_rdp("S", rdp_SYN, seq, 0, "");
-            } else if(rdp_flags() & rdp_RST) {
-                send_rdp("S", rdp_SYN, seq, 0, "");
-            } else {
-                rdp_log("Unkown packet:");
-                rdp_log_hex(recieve_buffer, rdp_size());
+                if(rdp_flags() & rdp_RST) {
+                    timeout_count = 0;
+                    maximum_rst_attempts--;
+                    if(!maximum_rst_attempts) {
+                        rdp_exit(EXIT_FAILURE, "RDP transmission failed as the connection was reset too many times.");
+                    }
+                    send_rdp("S", rdp_SYN, seq, 0, "");
+                } else {
+                    rdp_log("Unexpected packet!");
+                }
+                break;
             }
-        } else {
-            // timeout
-            send_rdp("S", rdp_SYN, seq, 0, "");
-            // resend
-            // extend timer
+            case event_bad_packet: {
+                send_rdp("S", rdp_SYN, seq, 0, "");
+                break;
+            }
+            case timeout: {
+                timeout = (int) timeout * 1.1;
+                timeout_count++;
+                if(timeout_count > MAXIMUM_TIMEOUTS) {
+                    rdp_exit(EXIT_FAILURE, 'RDP transimmision as the connection timed out too many times');
+                }
+                rdp_log("Request timed out. Retrying...");
+                send_rdp("S", rdp_SYN, seq, 0, "");
+                break;
+            }
         }
     }
 }
