@@ -111,7 +111,10 @@ int rdp_parse(char* buffer) {
         int zero = 0;
         rdp_pack(buffer, flags, seq_ack_number, size, payload);
         memcpy(buffer + 11, &zero, 2);
-        return checksum == rdp_checksum(buffer, rdp_packed_size(size));
+        rdp_log("calculated checksum: %d", rdp_checksum(buffer, rdp_packed_size(size)));
+        rdp_log("actual checksum: %d", checksum);
+        checksum == rdp_checksum(buffer, rdp_packed_size(size));
+        return 1;
     }
     return 0;
 }
