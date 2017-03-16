@@ -15,21 +15,21 @@ typedef unsigned short unint16_t;
 
 extern const char* rdp_flag_names[];
 
-extern unint16_t  rdp_packaged_size(const unint16_t payload_size);
-extern void rdp_package(
+extern unint16_t  rdp_packed_size(const unint16_t payload_size);
+char* void rdp_pack(
     char* buffer,
     const unint8_t flags,
-    const unint16_t seq_number,
-    const unint16_t ack_number,
+    const unint16_t seq_ack_number,
     const unint16_t size,
     const char* payload
 );
 extern int rdp_parse(char* buffer);
-extern unint16_t  rdp_flags();
-extern unint16_t  rdp_seq_number();
-extern unint16_t  rdp_ack_number();
-extern unint16_t  rdp_window_size();
-extern unint16_t  rdp_payload_size();
-extern void rdp_payload(char* buffer);
+extern int rdp_checksum(const char* buffer, const unint16_t length);
+extern unint16_t rdp_flags();
+extern unint16_t rdp_seq_ack_number();
+extern unint16_t rdp_payload_size();
+extern unint16_t rdp_window_size();
+extern unint16_t rdp_size();
+extern char* rdp_payload();
 
 #endif

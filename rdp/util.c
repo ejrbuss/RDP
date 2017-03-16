@@ -73,8 +73,7 @@ void rdp_log_packet(
     const char* destination_ip,
     const char* destination_port,
     const char* packet_type,
-    const int seq_number,
-    const int ack_number,
+    const int seq_ack_number
     const int size
 ) {
     time_t timer;
@@ -86,10 +85,11 @@ void rdp_log_packet(
 
     strftime(buffer, 26, "%H:%M:%S", tm_info);
 
-    int micro = ((int) (clock() / (CLOCKS_PER_SEC / 1000000.0)))
-             - (((int) (clock() / CLOCKS_PER_SEC)) * 1000000.0);
+    int clocks = clock() * 1.0;
+    int micro = ((int) (clocks / (CLOCKS_PER_SEC / 1000000)))
+             - (((int) (clocks / CLOCKS_PER_SEC)) * 1000000);
 
-    printf("%s.%06d %s %s:%s %s:%s %s %d/%d %d\n",
+    printf("%s.%06d %s %s:%s %s:%s %s %d %d\n",
         buffer,
         micro,
         event,
@@ -98,8 +98,7 @@ void rdp_log_packet(
         destination_ip,
         destination_port,
         packet_type,
-        seq_number,
-        ack_number,
+        seq_ack_number,
         size
     );
 }

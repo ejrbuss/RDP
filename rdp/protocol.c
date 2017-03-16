@@ -5,7 +5,14 @@
 #include "netconfig.h"
 #include "util.h"
 
-#define header_size 13
+#define HEADER_SIZE 13
+
+unint16_t flags;
+unint16_t seq_ack_number;
+unint16_t payload_size;
+unint16_t window_size;
+unint16_t size;
+char payload[rdp_MAX_PACKET_SIZE];
 
 const char* rdp_flag_names[] = {
     "NO-TYPE",    "ACK",             "SYN",         "ACK/SYN",
@@ -18,88 +25,124 @@ const char* rdp_flag_names[] = {
     "FIN/RST/DAT","ACK/FIN/RST/DAT", "SYN/FIN/RST", "SYN/ACK/FIN/RST/DAT"
 };
 
-unint16_t  flags;
-unint16_t  seq_number;
-unint16_t  ack_number;
-unint16_t  window_size;
-unint16_t  payload_size;
-char* payload;
-
-unint16_t rdp_packaged_size(const unint16_t  payload_size) {
-    return payload_size + header_size;
+/**
+ * Calculates the total packet size for a given data payload.
+ *
+ * @param   const unint16_t payload_size the size of the paylaod in bytes (no padding)
+ * @returns unint16_t                    the packed packet size in bytes
+ */
+unint16_t rdp_packed_size(const unint16_t payload_size) {
+    return payload_size + HEADER_SIZE;
 }
 
-void rdp_package(
+/**
+ * Packs a buffer (expected to be at least rdp_MAX_PACKET_SIZE in length) for
+ * RDP transmission.
+ *
+ * @param   char*           buffer         a buffer to pack
+ * @param   const unint16_t flags          flag byte
+ * @param   const unint16_t seq_ack_number sequence of flag number
+ * @param   const unint16_t size           paylod or window size number
+ * @param   const char*     payload        a buffer containing the payload
+ * @returns char*                          a pointer to the packed buffer
+ */
+char* rdp_pack(
     char* buffer,
-    const unint8_t  flags,
-    const unint16_t  seq_number,
-    const unint16_t  ack_number,
-    const unint16_t  size,
+    const unint8_t flags,
+    const unint16_t seq_ack_number,
+    const unint16_t size,
     const char* payload
 ) {
     // Get total packet size
-    unint16_t  length = rdp_packaged_size(size);
+    unint16_t checksum = 0;
     char* _magic_ = "CSC361";
     // Zero the buffer
     rdp_zero(buffer, size + 1);
     // Serialize
-    memcpy(buffer + 0, _magic_,      6);
-    memcpy(buffer + 6,  &flags,      1);
-    memcpy(buffer + 7,  &seq_number, 2);
-    memcpy(buffer + 9,  &ack_number, 2);
-    memcpy(buffer + 11, &size,       2);
+    memcpy(buffer + 0, _magic_,         6);
+    memcpy(buffer + 6, &flags,          1);
+    memcpy(buffer + 7, &seq_ack_number, 2);
+    memcpy(buffer + 9, &size,           2);
     if(flags & rdp_DAT) {
-        memcpy(buffer + header_size, payload, size);
+        memcpy(buffer + HEADER_SIZE, payload, size);
     }
+    checksum = rdp_checksum(buffer, rdp_packed_size(size));
+    memcpy(buffer + 11, &checksum, 2);
+    // Return packed buffer
+    return buffer;
 }
-
+/**
+ * Reads a recieved buffer and parses the header and payload. Expects the
+ * given buffer to be at least rdp_MAX_PACKET_SIZE in length. Returns a flag
+ * indicating if the packet had a valid header and had a matching checksum.
+ *
+ * @param   char* buffer a buffer containing recieved bytes
+ * @returns int          a flag indicating if the header was valid
+ */
 int rdp_parse(char* buffer) {
 
+    unint16_t checksum = 0;
     char _magic_[7];
+    rdp_zero(payload, rdp_MAX_PACKET_SIZE);
     rdp_zero(_magic_, 7);
-    flags        = 0;
-    seq_number   = 0;
-    ack_number   = 0;
-    window_size  = 0;
-    payload_size = 0;
+
+    flags          = 0;
+    seq_ack_number = 0;
+    payload_size   = 0;
+    window_size    = 0;
 
     // Deserialize
-    memcpy(_magic_,       buffer + 0,  6);
-    memcpy(&flags,        buffer + 6,  1);
-    memcpy(&seq_number,   buffer + 7,  2);
-    memcpy(&ack_number,   buffer + 9,  2);
+    memcpy(_magic_,         buffer + 0,  6);
+    memcpy(&flags,          buffer + 6,  1);
+    memcpy(&seq_ack_number, buffer + 7,  2);
+    memcpy(&size,           buffer + 9,  2);
+    memcpy(&checksum,       buffer + 11, 2);
     if(flags & rdp_DAT) {
-        memcpy(&payload_size, buffer + 11, 2);
-        window_size = 0;
+        memcpy(&payload_size, buffer + 9, 2);
+        memcpy(&payload, buffer + HEADER_SIZE, size);
     } else {
-        memcpy(&window_size,  buffer + 11, 2);
-        payload_size = 0;
+        memcpy(&window_size, buffer + 9, 2);
     }
-    payload = buffer + header_size;
-    return rdp_streq(_magic_, "CSC361");
+    size = rdp_packed_size(payload_size);
+
+    // validate header
+    if(rdp_streq(_magic_, "CSC361") {
+        char buffer[rdp_MAX_PACKET_SIZE];
+        return checksum == rdp_checksum(rdp_pack(
+            buffer,
+            flags,
+            seq_ack_number,
+            size,
+            payload
+        ), rdp_packed_size(size));
+    }
+    return 0;
 }
 
-unint16_t  rdp_flags() {
-    return flags;
+/**
+ * Returns a checksum for a buffer.
+ *
+ * @param   const char*     buffer the buffer to checksum
+ * @param   const unint16_t length the length of the buffer
+ * @returns unint16_t              checksum of the buffer
+ */
+unint16_t rdp_checksum(const char* buffer, const unint16_t length) {
+
+    unint16_t sum  = 0;
+    unint16_t word = 0;
+
+    int i;
+    for(i = 0; i < length / 2; i++) {
+        memcpy(&word, buffer + (i * 2), 2);
+        sum += word;
+    }
+    return ~sum;
 }
 
-unint16_t  rdp_seq_number() {
-    return seq_number;
-}
-
-unint16_t  rdp_ack_number() {
-    return ack_number;
-}
-
-unint16_t  rdp_window_size() {
-    return window_size;
-}
-
-unint16_t  rdp_payload_size() {
-    return payload_size;
-}
-
-void rdp_payload(char* buffer) {
-    rdp_zero(buffer, payload_size + 2);
-    memcpy(buffer, payload, payload_size);
-}
+// Getters
+unint16_t rdp_flags() { return flags; }
+unint16_t rdp_seq_ack_number() { return seq_ack_number; }
+unint16_t rdp_payload_size() { return payload_size; }
+unint16_t rdp_window_size() { return window_size; }
+unint16_t rdp_size() { return size; }
+char* rdp_payload() { return payload; }
