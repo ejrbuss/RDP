@@ -14,6 +14,8 @@
 #define SOCK_BUFFER_SIZE 2000
 #define ADDR_SIZE        200
 #define TIMEOUT          500
+#define MAXIMUM_TIMEOUTS 5
+#define MAXIMUM_RESETS   5
 
 /* Stat tracking */
 int stat_sent_total_bytes             = 0;
@@ -47,7 +49,6 @@ struct sockaddr_in source_address;
 int destination_socket;
 struct sockaddr_in destination_address;
 
-int maximum_rst_attempts = 5;
 int sequence_number;
 int ack;
 
@@ -68,7 +69,7 @@ void open_source_socket() {
         source_socket,
         SOL_SOCKET,
         SO_REUSEADDR,
-        (const void *) &option,
+        (const void*) &option,
         sizeof(int)
     );
     memset(&source_address, 0, sizeof(source_address));
@@ -238,11 +239,12 @@ void rdp_sender(
 void rdp_sender_connect() {
 
     sequence_number   = rdp_get_seq_number();
+    int reset_count   = 0;
     int timeout_count = 0;
-    int timeout       = 1000;
+    int timeout       = TIMEOUT;
 
     rdp_log("Establishing connection...");
-    send_rdp("s", rdp_SYN, seq, 0, "");
+    send_rdp("s", rdp_SYN, sequence_number, 0, "");
 
     while(1) {
         switch(listen_rdp(timeout)) {
@@ -255,8 +257,7 @@ void rdp_sender_connect() {
                 }
                 if(rdp_flags() & rdp_RST) {
                     timeout_count = 0;
-                    maximum_rst_attempts--;
-                    if(maximum_rst_attempts == 0) {
+                    if(reset_count++ > MAXIMUM_RESETS) {
                         rdp_exit(EXIT_FAILURE, "RDP transmission failed as the connection was reset too many times.");
                     }
                 } else {
