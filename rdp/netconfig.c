@@ -137,6 +137,7 @@ int listen_rdp(int timeout_milli) {
     );
 
     if(!rdp_parse(recieve_buffer)) {
+        rdp_log("Bad packet!");
         return event_bad_packet;
     }
 
