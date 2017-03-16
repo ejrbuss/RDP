@@ -111,7 +111,7 @@ int rdp_parse(char* buffer) {
     // Valdiate header
     return
         rdp_streq(_magic_, "CSC361") &&
-        rdp_checksum(flags, seq_ack_number, payload_size, payload) == checksum;
+        rdp_checksum(flags, seq_ack_number, payload_size | window_size, payload) == checksum;
 }
 
 /**
