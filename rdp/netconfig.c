@@ -293,8 +293,8 @@ void rdp_send() {
     for(i = 0; i < size; i += 700) {
         char payload[701];
         rdp_filestream_read(payload, 700, i);
-        send_rdp("s", rdp_DAT, seq, 700, payload);
-        seq += 700;
+        send_rdp("s", rdp_DAT, sequence_number, 700, payload);
+        sequence_number += 700;
     }
     /*
     while(1) {
@@ -323,18 +323,18 @@ void rdp_send() {
 void rdp_sender_disconnect() {
 
     // SEND FIN packet
-    send_rdp("s", rdp_FIN, ++seq, 0, "");
+    send_rdp("s", rdp_FIN, sequence_number, 0, "");
 
     while(1) {
         int event = listen_rdp(TIMEOUT);
         if(event == event_recieved) {
             if(rdp_flags() & rdp_ACK) {
-                if(rdp_seq_ack_number() == seq + 1) {
+                if(rdp_seq_ack_number() == sequence_number + 1) {
                     return;
                 }
-                send_rdp("S", rdp_FIN, ++seq, 0, "");
+                send_rdp("S", rdp_FIN, sequence_number, 0, "");
             } else if(rdp_flags() & rdp_RST) {
-                send_rdp("S", rdp_FIN, ++seq, 0, "");
+                send_rdp("S", rdp_FIN, sequence_number, 0, "");
                 // try again
             } else {
                 rdp_log("Unkown packet:");
@@ -342,7 +342,7 @@ void rdp_sender_disconnect() {
             }
         } else {
             // timeout
-            send_rdp("S", rdp_FIN, ++seq, 0, "");
+            send_rdp("S", rdp_FIN, sequence_number, 0, "");
             // resend
             // extend timer
         }
