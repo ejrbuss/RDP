@@ -248,8 +248,8 @@ void rdp_sender_connect() {
         switch(listen_rdp(timeout)) {
             case event_recieved: {
                 if(rdp_flags() & rdp_ACK) {
-                    if(rdp_seq_ack_number() == seq + 1) {
-                        seq++;
+                    if(rdp_seq_ack_number() == sequence_number + 1) {
+                        sequence_number++;
                         return;
                     }
                 }
@@ -262,11 +262,11 @@ void rdp_sender_connect() {
                 } else {
                     rdp_log("Unexpected packet!");
                 }
-                send_rdp("S", rdp_SYN, seq, 0, "");
+                send_rdp("S", rdp_SYN, sequence_number, 0, "");
                 break;
             }
             case event_bad_packet: {
-                send_rdp("S", rdp_SYN, seq, 0, "");
+                send_rdp("S", rdp_SYN, sequence_number, 0, "");
                 break;
             }
             case timeout: {
@@ -276,7 +276,7 @@ void rdp_sender_connect() {
                     rdp_exit(EXIT_FAILURE, 'RDP transimmision as the connection timed out too many times.');
                 }
                 rdp_log("Request timed out. Retrying...");
-                send_rdp("S", rdp_SYN, seq, 0, "");
+                send_rdp("S", rdp_SYN, sequence_number, 0, "");
                 break;
             }
         }
