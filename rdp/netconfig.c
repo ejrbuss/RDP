@@ -431,7 +431,7 @@ void rdp_recieve() {
                     send_rdp("s", rdp_ACK, ack_number, window_size, "");
                 } else if(rdp_flags() & rdp_FIN) {
                     disconnecting = 1;
-                    ack_number    = rdP-seq_ack_number();
+                    ack_number    = rdp_seq_ack_number();
                     send_rdp("s", rdp_ACK, ack_number, window_size, "");
                 } else if(rdp_flags() & rdp_DAT) {
 
@@ -465,7 +465,7 @@ void rdp_recieve() {
                         for(i = 0; i < WINDOW_SIZE; i++) {
                             if(sequence_numbers[i] == -1) {
                                 char* payload = rdp_payload();
-                                sequence_number[i] = rdp_seq_ack_number();
+                                sequence_numbers[i] = rdp_seq_ack_number();
                                 rdp_zero(payload_buffer + (i * rdp_MAX_PACKET_SIZE), rdp_MAX_PACKET_SIZE);
                                 memcpy(payload_buffer + (i * rdp_MAX_PACKET_SIZE), &payload, rdp_payload_size());
                                 break;
@@ -475,7 +475,7 @@ void rdp_recieve() {
                             send_rdp("s", rdp_ACK, ack_number, window_size, "");
                         }
                     }
-                } else if(rdp_flags() & rdp_RST {
+                } else if(rdp_flags() & rdp_RST) {
                     timeout_count = 0;
                     if(reset_count++ > MAXIMUM_RESETS) {
                         rdp_exit(EXIT_FAILURE, "RDP transmission failed as the connection was reset too many times.");
