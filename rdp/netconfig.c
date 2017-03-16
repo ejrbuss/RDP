@@ -171,6 +171,7 @@ int listen_rdp(int timeout_milli) {
     stat_recieved_rst_packets += !!(rdp_flags() & rdp_RST);
 
     if(parse == 0) {
+        rdp_log("Bad packet!");
         return event_bad_packet;
     }
 
