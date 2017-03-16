@@ -134,9 +134,12 @@ int listen_rdp(int timeout_milli) {
         (struct sockaddr*) &destination_address,
         &socket_length
     );
+    /*
     if(!rdp_parse(recieve_buffer)) {
         return event_bad_packet;
     }
+    */
+    rdp_parse(recieve_buffer);
 
     // We don't yet know our destination so read it in
     if(destination_ip[0] == 0 || destination_port[0] == 0) {
