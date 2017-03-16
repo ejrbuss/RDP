@@ -7,6 +7,9 @@
 
 int DEBUG = 0;
 
+/**
+ * Enable debug mode.
+ */
 void rdp_debug() {
     DEBUG = 1;
 }

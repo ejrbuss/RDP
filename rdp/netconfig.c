@@ -323,29 +323,43 @@ void rdp_send() {
 
 void rdp_sender_disconnect() {
 
-    // SEND FIN packet
+    int reset_count   = 0;
+    int timeout_count = 0;
+    int timeout = TIMEOUT;
+
     send_rdp("s", rdp_FIN, sequence_number, 0, "");
 
     while(1) {
-        int event = listen_rdp(TIMEOUT);
-        if(event == event_recieved) {
-            if(rdp_flags() & rdp_ACK) {
-                if(rdp_seq_ack_number() == sequence_number + 1) {
-                    return;
+        switch(listen_rdp(timeout)) {
+            case event_recieved: {
+                if(rdp_flags() & rdp_ACK) {
+                    if(rdp_seq_ack_number() == sequence_number + 1) {
+                        return;
+                    }
+                } else if(rdp_flags() & rdp_RST) {
+                    timeout_count = 0;
+                    if(reset_count++ > MAXIMUM_RESETS) {
+                        rdp_exit(EXIT_FAILURE, "RDP transmission failed as the connection was reset too many times.");
+                    }
+                } else {
+                    rdp_log("Unexpected packet!");
                 }
                 send_rdp("S", rdp_FIN, sequence_number, 0, "");
-            } else if(rdp_flags() & rdp_RST) {
-                send_rdp("S", rdp_FIN, sequence_number, 0, "");
-                // try again
-            } else {
-                rdp_log("Unkown packet:");
-                rdp_log_hex(recieve_buffer, rdp_size());
+                break;
             }
-        } else {
-            // timeout
-            send_rdp("S", rdp_FIN, sequence_number, 0, "");
-            // resend
-            // extend timer
+            case event_bad_packet: {
+                send_rdp("S", rdp_FIN, sequence_number, 0, "");
+                break;
+            }
+            case event_timeout: {
+                timeout = (int) timeout * 1.1;
+                timeout_count++;
+                if(timeout_count > MAXIMUM_TIMEOUTS) {
+                    rdp_exit(EXIT_FAILURE, "RDP transimmision as the connection timed out too many times.");
+                }
+                send_rdp("S", rdp_FIN, sequence_number, 0, "");
+                break;
+            }
         }
     }
 }

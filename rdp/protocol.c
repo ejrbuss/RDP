@@ -5,8 +5,10 @@
 #include "netconfig.h"
 #include "util.h"
 
+// Defines the full size of the header
 #define HEADER_SIZE 13
 
+// Local variables for maintaining parse states
 unint16_t flags;
 unint16_t seq_ack_number;
 unint16_t payload_size;
@@ -14,6 +16,7 @@ unint16_t window_size;
 unint16_t size;
 char payload[rdp_MAX_PACKET_SIZE];
 
+// Packet names based off flags
 const char* rdp_flag_names[] = {
     "NO-TYPE",    "ACK",             "SYN",         "ACK/SYN",
     "FIN",        "ACK/FIN",         "SYN/FIN",     "ACK/SYN/FIN",
