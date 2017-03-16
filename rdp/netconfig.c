@@ -436,7 +436,7 @@ void rdp_recieve() {
                     send_rdp("s", rdp_ACK, ack_number, window_size, "");
                 } else if(rdp_flags() & rdp_FIN) {
                     disconnecting = 1;
-                    ack_number    = rdp_seq_ack_number();
+                    ack_number    = rdp_seq_ack_number() + 1;
                     send_rdp("s", rdp_ACK, ack_number, window_size, "");
                 } else if(rdp_flags() & rdp_DAT) {
 

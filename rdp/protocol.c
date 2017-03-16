@@ -106,7 +106,6 @@ int rdp_parse(char* buffer) {
         memcpy(&window_size, buffer + 9, 2);
     }
     size = rdp_packed_size(payload_size);
-    rdp_log("\nRECIEVED CHECKSUM %d\n", checksum);
 
     // Valdiate header
     return
@@ -130,11 +129,6 @@ unint16_t rdp_checksum(
     const char* payload
 ) {
 
-    rdp_log("flag: %d\n", flags);
-    rdp_log("seqa: %d\n", seq_ack_number);
-    rdp_log("size: %d\n", size);
-    rdp_log("payl: %s\n", payload);
-
     char buffer[rdp_MAX_PACKET_SIZE];
     char* _magic_    = "CSC361";
     int payload_size = 0;
@@ -155,9 +149,7 @@ unint16_t rdp_checksum(
     for(i = 0; i < rdp_packed_size(len - 2) / 2; i++) {
         memcpy(&word, buffer + (i * 2), 2);
         sum += word;
-        rdp_log("%d", sum);
     }
-    rdp_log("final: %d", ~sum);
     return ~sum;
 }
 
