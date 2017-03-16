@@ -136,10 +136,8 @@ int listen_rdp(int timeout_milli) {
         &socket_length
     );
 
-    if(!rdp_parse(recieve_buffer)) {
-        rdp_log("Bad packet!");
-        return event_bad_packet;
-    }
+    int parse = rdp_parse(recieve_buffer);
+
 
     // We don't yet know our destination so read it in
     if(destination_ip[0] == 0 || destination_port[0] == 0) {
@@ -171,6 +169,10 @@ int listen_rdp(int timeout_milli) {
     stat_recieved_dat_packets += !!(rdp_flags() & rdp_DAT);
     stat_recieved_ack_packets += !!(rdp_flags() & rdp_ACK);
     stat_recieved_rst_packets += !!(rdp_flags() & rdp_RST);
+
+    if(parse == 0) {
+        return event_bad_packet;
+    }
 
     return event_recieved;
 }

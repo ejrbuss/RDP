@@ -152,9 +152,7 @@ unint16_t rdp_checksum(
     for(i = 0; i < rdp_packed_size(size - 2) / 2; i++) {
         memcpy(&word, buffer + (i * 2), 2);
         sum += word;
-        rdp_log("%d", sum);
     }
-    rdp_log("final: %d", ~sum);
     return ~sum;
 }
 
