@@ -143,12 +143,16 @@ unint16_t rdp_checksum(
     memcpy(buffer + 6, &flags,          1);
     memcpy(buffer + 7, &seq_ack_number, 2);
     memcpy(buffer + 9, &size,           2);
+    if(flags & rdp_DAT) {
+        memcpy(buffer + HEADER_SIZE - 2, payload, size);
+    };
 
     unint16_t sum  = 0;
     unint16_t word = 0;
 
     int i;
-    for(i = 0; i < (11 / 2); i++) {
+    int len = flags & rdp_DAT ? size : 0;
+    for(i = 0; i < rdp_packed_size(len - 2) / 2; i++) {
         memcpy(&word, buffer + (i * 2), 2);
         sum += word;
         rdp_log("%d", sum);
