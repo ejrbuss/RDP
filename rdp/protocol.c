@@ -106,7 +106,7 @@ int rdp_parse(char* buffer) {
     size = rdp_packed_size(payload_size);
 
     // validate header
-    if(rdp_streq(_magic_, "CSC361") {
+    if(rdp_streq(_magic_, "CSC361")) {
         char buffer[rdp_MAX_PACKET_SIZE];
         return checksum == rdp_checksum(rdp_pack(
             buffer,

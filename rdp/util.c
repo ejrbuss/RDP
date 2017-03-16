@@ -73,7 +73,7 @@ void rdp_log_packet(
     const char* destination_ip,
     const char* destination_port,
     const char* packet_type,
-    const int seq_ack_number
+    const int seq_ack_number,
     const int size
 ) {
     time_t timer;

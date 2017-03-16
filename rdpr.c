@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 
     return EXIT_SUCCESS;
 }
-
+/**
 void rdps_test() {
 
     rdp_debug();
@@ -141,3 +141,4 @@ void rdps_test() {
         rdp_log_hex("Hello World!!! How are you doing today :)", 24);
     }
 }
+*/

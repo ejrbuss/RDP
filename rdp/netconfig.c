@@ -190,7 +190,7 @@ void send_rdp(
     rdp_pack(
         send_buffer,
         flags,
-        seq_ack_number
+        seq_ack_number,
         size,
         payload
     );
