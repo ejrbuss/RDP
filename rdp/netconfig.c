@@ -415,7 +415,7 @@ void rdp_recieve() {
         int connected     = 0;
         int disconnecting = 0;
 
-        unint16_t window_size = WINDOW_SIZE:
+        unint16_t window_size = WINDOW_SIZE;
         unint16_t ack_number  = 0;
 
         int i;
@@ -456,7 +456,7 @@ void rdp_recieve() {
                                         window_size++;
                                     }
                                 }
-                            } while(deque);
+                            } while(dequeue);
                         }
                     } else if(window_size == 0) {
                         send_rdp("s", rdp_ACK, ack_number, window_size, "");
@@ -464,6 +464,7 @@ void rdp_recieve() {
                         // Queue data
                         for(i = 0; i < WINDOW_SIZE; i++) {
                             if(sequence_numbers[i] == -1) {
+                                char* payload = rdp_payload();
                                 sequence_number[i] = rdp_seq_ack_number();
                                 rdp_zero(payload_buffer + (i * rdp_MAX_PACKET_SIZE), rdp_MAX_PACKET_SIZE);
                                 memcpy(payload_buffer + (i * rdp_MAX_PACKET_SIZE), &payload, rdp_payload_size());
@@ -474,10 +475,6 @@ void rdp_recieve() {
                             send_rdp("s", rdp_ACK, ack_number, window_size, "");
                         }
                     }
-
-                    char* payload = rdp_payload();
-
-                    for()
                 } else if(rdp_flags() & rdp_RST {
                     timeout_count = 0;
                     if(reset_count++ > MAXIMUM_RESETS) {
