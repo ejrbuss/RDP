@@ -116,7 +116,7 @@ int listen_rdp(int timeout_milli) {
     select_result = select(source_socket + 1, &read_fds, NULL, NULL, &timeout);
 
     // Check result
-    switch (select_result) {
+    switch(select_result) {
         case -1:
             close(source_socket);
             rdp_exit(EXIT_FAILURE, "Error in select: %s\n", strerror(errno));
@@ -237,7 +237,7 @@ void rdp_sender(
 
 void rdp_sender_connect() {
 
-    sequence_number = rdp_get_seq_number();
+    sequence_number   = rdp_get_seq_number();
     int timeout_count = 0;
     int timeout       = 1000;
 
@@ -252,18 +252,17 @@ void rdp_sender_connect() {
                         seq++;
                         return;
                     }
-                    send_rdp("S", rdp_SYN, seq, 0, "");
                 }
                 if(rdp_flags() & rdp_RST) {
                     timeout_count = 0;
                     maximum_rst_attempts--;
-                    if(!maximum_rst_attempts) {
+                    if(maximum_rst_attempts == 0) {
                         rdp_exit(EXIT_FAILURE, "RDP transmission failed as the connection was reset too many times.");
                     }
-                    send_rdp("S", rdp_SYN, seq, 0, "");
                 } else {
                     rdp_log("Unexpected packet!");
                 }
+                send_rdp("S", rdp_SYN, seq, 0, "");
                 break;
             }
             case event_bad_packet: {
@@ -274,7 +273,7 @@ void rdp_sender_connect() {
                 timeout = (int) timeout * 1.1;
                 timeout_count++;
                 if(timeout_count > MAXIMUM_TIMEOUTS) {
-                    rdp_exit(EXIT_FAILURE, 'RDP transimmision as the connection timed out too many times');
+                    rdp_exit(EXIT_FAILURE, 'RDP transimmision as the connection timed out too many times.');
                 }
                 rdp_log("Request timed out. Retrying...");
                 send_rdp("S", rdp_SYN, seq, 0, "");
