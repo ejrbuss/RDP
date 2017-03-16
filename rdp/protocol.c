@@ -127,7 +127,7 @@ unint16_t rdp_checksum(
     rdp_log("flags: %d", flags);
     rdp_log("seq:  %d", seq_ack_number);
     rdp_log("size: %d", size);
-    rdp_log("payl: %s", payl);
+    rdp_log("payl: %s", payload);
 
     char buffer[rdp_MAX_PACKET_SIZE];
     char* _magic_ = "CSC361";
