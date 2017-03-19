@@ -5,9 +5,6 @@
 #include "netconfig.h"
 #include "util.h"
 
-// Defines the full size of the header
-#define HEADER_SIZE 13
-
 // Local variables for maintaining parse states
 unint16_t flags;
 unint16_t seq_ack_number;
@@ -35,7 +32,7 @@ const char* rdp_flag_names[] = {
  * @returns unint16_t                    the packed packet size in bytes
  */
 unint16_t rdp_packed_size(const unint16_t payload_size) {
-    return payload_size + HEADER_SIZE;
+    return payload_size + rdp_HEADER_SIZE;
 }
 
 /**
@@ -68,7 +65,7 @@ char* rdp_pack(
     memcpy(buffer + 9, &size,           2);
     memcpy(buffer + 11, &checksum, 2);
     if(flags & rdp_DAT) {
-        memcpy(buffer + HEADER_SIZE, payload, size);
+        memcpy(buffer + rdp_HEADER_SIZE, payload, size);
     }
     // Return packed buffer
     return buffer;
@@ -101,7 +98,7 @@ int rdp_parse(char* buffer) {
     memcpy(&checksum,       buffer + 11, 2);
     if(flags & rdp_DAT) {
         memcpy(&payload_size, buffer + 9, 2);
-        memcpy(&payload, buffer + HEADER_SIZE, size);
+        memcpy(&payload, buffer + rdp_HEADER_SIZE, size);
     } else {
         memcpy(&window_size, buffer + 9, 2);
     }
@@ -138,7 +135,7 @@ unint16_t rdp_checksum(
     memcpy(buffer + 7, &seq_ack_number, 2);
     memcpy(buffer + 9, &size,           2);
     if(flags & rdp_DAT) {
-        memcpy(buffer + HEADER_SIZE - 2, payload, size);
+        memcpy(buffer + rdp_HEADER_SIZE - 2, payload, size);
     };
 
     unint16_t sum  = 0;

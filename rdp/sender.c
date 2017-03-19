@@ -5,11 +5,17 @@
 #include "netconfig.h"
 #include "util.h"
 
+#define PAYLOAD_SIZE (rdp_MAX_PACKET_SIZE - rdp_HEADER_SIZE)
+
+int finished;
 int connected;
 int reset_count;
 int timeout_count;
 int timeout;
+int start;
+int file_size;
 
+int file_pointer;
 unint16_t seq_number;
 
 /**
@@ -26,13 +32,17 @@ void rdp_sender(
     // Init source socket and socket address
     rdp_open_source_socket(sender_ip, sender_port);
 
+    finished      = 0;
     connected     = 0;
     reset_count   = 0;
     timeout_count = 0;
+    file_pointer  = 0;
+    file_size     = rdp_filestream_size();
+
     timeout       = TIMEOUT;
     seq_number    = (unint16_t) rdp_get_seq_number();
+    start         = seq_number;
 }
-
 
 /**
  *
@@ -50,7 +60,7 @@ void connect_recieved_ACK() {
 /**
  *
  */
-void connect_recieved_reset() {
+void connect_recieved_RST() {
     timeout_count = 0;
     if(reset_count++ > MAXIMUM_RESETS) {
         rdp_close_sockets();
@@ -82,7 +92,7 @@ void rdp_sender_connect() {
     while(!connected) {
         switch(rdp_listen(timeout)) {
             case event_ACK: connect_recieved_ACK(); break;
-            case event_RST: connect_recieved_reset(); break;
+            case event_RST: connect_recieved_RST(); break;
             case event_SYN:
             case event_FIN:
             case event_DAT:
@@ -94,18 +104,91 @@ void rdp_sender_connect() {
     }
 }
 
+/**
+ *
+ */
+void seq_diff() {
+    if(seq_number < rdp_seq_ack_number()) {
+        return (0xFFFF - seq_number + rdp_seq_ack_number())
+    } else {
+        return rdp_seq_ack_number() - seq_number;
+    }
+}
+
+/**
+ *
+ */
+void send_packets() {
+
+    int i;
+    // Send DAT packets
+    for(i = 0; i < rdp_window_size(); i++) {
+        char[PAYLOAD_SIZE + 1];
+        int len  = rdp_filestream_read(paylaod, PAYLOAD_SIZE, file_pointer);
+        int size = PAYLOAD_SIZE > len ? PAYLOAD_SIZE : len;
+        rdp_send(rdp_DAT, seq_number, size, payload);
+        file_pointer += size;
+        seq_number   += size;
+    }
+}
+
+/**
+ *
+ */
+void send_recieved_ACK() {
+    unint16_t diff = seq_diff();
+    file_point += diff;
+    seq_number += diff;
+    if(file_pointer >= file_size) {
+        finished = 1;
+    }
+    send_packets();
+}
+
+/**
+ *
+ */
+void send_recieved_RST() {
+    file_pointer  = 0;
+    timeout_count = 0;
+    seq_number    = start;
+    if(reset_count++ > MAXIMUM_RESETS) {
+        rdp_close_sockets();
+        rdp_exit(EXIT_FAILURE, "RDP transmission failed as the connection was reset too many times.");
+    }
+    send_packets();
+}
+
+/**
+ *
+ */
+void send_recieved_timeout() {
+    send_packets();
+    if(timeout_count++ > MAXIMUM_TIMEOUTS) {
+        rdp_close_sockets();
+        rdp_exit(EXIT_FAILURE, "RDP transimmision fauked as the connection timed out too many times.");
+    }
+}
+
+/**
+ *
+ */
 void rdp_sender_send() {
 
+    send_packets();
     // SEND DAT packet
-    int size = rdp_filestream_size();
-    int l;
-    int i;
-
-    for(i = 0; i < size; i += 700) {
-        char payload[701];
-        rdp_filestream_read(payload, 700, i);
-        rdp_send(rdp_DAT, seq_number, 700, payload);
-        seq_number += 700;
+    while(!finished) {
+        switch(rdp_listen(timeout)) {
+            case event_ACK: send_recieved_ACK(); break;
+            case event_RST: send_recieved_RST(); break;
+            case event_SYN:
+            case event_FIN:
+            case event_DAT:
+            case event_bad_packet:
+                send_packets();
+                break;
+            case event_timeout: send_recieved_timeout(); break;
+        }
     }
 }
 

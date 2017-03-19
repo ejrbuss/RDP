@@ -10,6 +10,9 @@
 typedef unsigned char  unint8_t;
 typedef unsigned short unint16_t;
 
+// Defines the full size of the header
+#define rdp_HEADER_SIZE 13
+
 // Bit masks for packet flags
 #define rdp_ACK ((unint8_t) 0b00000001) // Acknowledgment flag
 #define rdp_SYN ((unint8_t) 0b00000010) // Synchrnoize flag
