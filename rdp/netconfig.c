@@ -219,16 +219,14 @@ int rdp_listen(const int timeout_milli) {
         rdp_payload_size() | rdp_window_size()
     );
 
-    int packed_size = rdp_packed_size(rdp_flags() & rdp_DAT ? rdp_size() : 0);
-
     // Compute statistics
     stats[stat_recieved_SYN]          += !!(rdp_flags() & rdp_SYN);
     stats[stat_recieved_FIN]          += !!(rdp_flags() & rdp_FIN);
     stats[stat_recieved_DAT]          += !!(rdp_flags() & rdp_DAT);
     stats[stat_recieved_ACK]          += !!(rdp_flags() & rdp_ACK);
     stats[stat_recieved_RST]          += !!(rdp_flags() & rdp_RST);
-    stats[stat_recieved_bytes_unique] += !(rdp_flags() & rdp_RES) * packed_size;
-    stats[stat_recieved_bytes]        += packed_size;
+    stats[stat_recieved_bytes_unique] += !(rdp_flags() & rdp_RES) * rdp_size();
+    stats[stat_recieved_bytes]        += rdp_size();
 
     rdp_log("%d", stats[stat_recieved_bytes]);
 
