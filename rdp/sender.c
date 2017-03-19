@@ -281,6 +281,5 @@ void rdp_sender_stats() {
         stats[stat_sent_RST],
         stats[stat_recieved_ACK],
         stats[stat_recieved_RST],
-        (stats[stat_end_time] - stats[stat_start_time]) / CLOCKS_PER_SECOND
-    );
+        (stats[stat_end_time] - stats[stat_start_time]) / CLOCKS_PER_SEC    );
 }
