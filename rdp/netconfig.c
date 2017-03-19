@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include "filestream.h"
 #include "netconfig.h"
+#include "protocol.h"
 #include "util.h"
 
 /* Stat tracking */
@@ -40,7 +41,7 @@ int timedout          = 0;
  * @param const char* ip   the source IP address
  * @param const char* port the source port number
  */
-void open_source_socket(const char* ip, const char* port) {
+void rdp_open_source_socket(const char* ip, const char* port) {
 
     // Copy source IP and port
     strcpy(source_ip, ip);
@@ -101,7 +102,7 @@ void open_source_socket(const char* ip, const char* port) {
  * @param const char* ip   the destiantion IP address
  * @param const char* port the destination port number
  */
-void open_destination_socket(const char* ip, const char* port) {
+void rdp_open_destination_socket(const char* ip, const char* port) {
 
     // Copy destination IP and port
     strcpy(destination_ip, ip);
@@ -146,7 +147,7 @@ void rdp_close_sockets() {
  * @param   const int timeout_milli
  * @returns int       the event
  */
-int listen_rdp(const int timeout_milli) {
+int rdp_listen(const int timeout_milli) {
 
     int select_result;
     ssize_t recsize;
@@ -250,7 +251,7 @@ int listen_rdp(const int timeout_milli) {
  * @param const unint16_t size
  * @param const char*     payload
  */
-void send_rdp(
+void rdp_send(
     const unint16_t flags,
     const unint16_t seq_ack_number,
     const unint16_t size,

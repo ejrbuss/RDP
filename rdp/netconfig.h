@@ -1,8 +1,6 @@
 #ifndef RDP_NOTCONFIG_HEADER
 #define RDP_NETCONFIG_HEADER
 
-#include "protocol.h"
-
 // Net Constants
 #define SOCK_BUFFER_SIZE 2000
 #define ADDR_SIZE        200

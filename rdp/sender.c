@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "sender.h"
 #include "filestream.h"
+#include "protocol.h"
 #include "netconfig.h"
 #include "util.h"
 
@@ -80,7 +81,7 @@ void rdp_sender_connect() {
     send_rdp(rdp_SYN, seq_number, 0, "");
 
     while(!connected) {
-        switch(listen_rdp(timeout)) {
+        switch(rdp_listen(timeout)) {
             case event_ACK: connect_recieved_ACK(); break;
             case event_RST: connect_recieved_reset(); break;
             case event_SYN:
@@ -153,7 +154,7 @@ void rdp_sender_disconnect() {
     send_rdp(rdp_FIN, seq_number, 0, "");
 
     while(connected) {
-        switch(listen_rdp(timeout)) {
+        switch(rdp_listen(timeout)) {
             case event_ACK: disconnect_recieved_ACK(); break;
             case event_RST: disconnect_recieved_RST(); break;
             case event_SYN:

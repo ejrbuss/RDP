@@ -3,6 +3,8 @@
 #include <string.h>
 #include "reciever.h"
 #include "filestream.h"
+#include "protocol.h"
+#include "netconfig.h"
 #include "util.h"
 
 char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
@@ -160,7 +162,7 @@ void recieved_timeout() {
  */
 void rdp_reciever_recieve() {
     loop {
-        switch(listen_rdp(timeout)) {
+        switch(rdp_listen(timeout)) {
             case event_SYN: recieved_SYN(); break;
             case event_FIN: recieved_FIN(); break;
             case event_DAT: recieved_DAT(); break;
