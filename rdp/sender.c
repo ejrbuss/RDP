@@ -83,7 +83,7 @@ void rdp_sender_connect() {
     while(!connected) {
         switch(listen_rdp(timeout)) {
             case event_ACK: connect_recieved_ACK(); break;
-            case evnet_RST: connect_recieved_reset(); break;
+            case event_RST: connect_recieved_reset(); break;
             case event_SYN:
             case event_FIN:
             case event_DAT:
