@@ -9,10 +9,10 @@
 #define WINDOW_SIZE      10
 
 // Event names
-enum event_t { event_SYN, event_FIN, event_DAT, event_RST, event_ACK, event_bad_packet, event_timeout };
+enum { event_SYN, event_FIN, event_DAT, event_RST, event_ACK, event_bad_packet, event_timeout };
 
 // Stat names
-enum stat_t {
+enum {
     stat_start_time,   stat_end_time,
     stat_sent_bytes,   stat_sent_bytes_unique,   stat_recieved_bytes, stat_recieved_bytes_unique,
     stat_sent_DAT,     stat_sent_DAT_unique,     stat_recieved_DAT,   stat_recieved_DAT_unique,
