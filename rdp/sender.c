@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "sender.h"
 #include "filestream.h"
 #include "protocol.c"
