@@ -79,6 +79,7 @@ void recieve_FIN() {
  *
  */
 void recieve_DAT() {
+    int i;
     // In order check
     if(rdp_seq_ack_number() == ack_number) {
         rdp_filestream_write(rdp_payload(), rdp_payload_size());
