@@ -43,6 +43,8 @@ static int timedout          = 0;
  */
 void rdp_open_source_socket(const char* ip, const char* port) {
 
+    stats[stat_start_time] = time(0);
+
     // Copy source IP and port
     strcpy(source_ip, ip);
     strcpy(source_port, port);
@@ -129,7 +131,6 @@ void rdp_open_destination_socket(const char* ip, const char* port) {
     destination_address.sin_port        = htons(atoi(destination_port));
 
     destination_bound = 1;
-    stats[stat_start_time] = time(0);
 }
 
 /**
