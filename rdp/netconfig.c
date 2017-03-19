@@ -210,7 +210,7 @@ int listen_rdp(const int timeout_milli) {
 
     // Log the packet
     rdp_log_packet(
-        rdp_flags() & rdp_RES ? "R", "r",
+        rdp_flags() & rdp_RES ? "R" : "r",
         destination_ip,
         destination_port,
         source_ip,
