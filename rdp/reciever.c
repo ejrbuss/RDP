@@ -6,7 +6,7 @@
 #include "netconfig.h"
 #include "util.h"
 
-const char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
+char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
 unint16_t payload_buffer_seq[WINDOW_SIZE];
 
 int recieved_packets;
