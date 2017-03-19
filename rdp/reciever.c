@@ -197,7 +197,8 @@ void rdp_reciever_stats() {
         "RST packets received: %d\n"
         "ACK packets sent: %d\n"
         "RST packets sent: %d\n"
-        "total time duration (second): %d\n",
+        "total time duration (second): %d\n"
+        "%d -> %d\n",
         stats[stat_recieved_bytes],
         stats[stat_recieved_bytes_unique],
         stats[stat_recieved_DAT],
@@ -207,6 +208,8 @@ void rdp_reciever_stats() {
         stats[stat_recieved_RST],
         stats[stat_sent_ACK],
         stats[stat_sent_RST],
-        (stats[stat_end_time] - stats[stat_start_time])
+        (stats[stat_end_time] - stats[stat_start_time]),
+        stats[stat_start_time],
+        stats[stat_end_time]
     );
 }
