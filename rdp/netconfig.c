@@ -44,6 +44,7 @@ static int timedout          = 0;
 void rdp_open_source_socket(const char* ip, const char* port) {
 
     stats[stat_start_time] = time(NULL);
+    rdp_log("STAT START TIME: %d\n", stats[stat_start_time]);
 
     // Copy source IP and port
     strcpy(source_ip, ip);
