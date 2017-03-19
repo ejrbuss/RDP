@@ -162,7 +162,7 @@ void recieved_timeout() {
  *
  */
 void rdp_reciever_recieve() {
-    while(!disconnet) {
+    while(!disconnect) {
         switch(rdp_listen(timeout)) {
             case event_SYN: recieved_SYN(); break;
             case event_FIN: recieved_FIN(); break;
