@@ -9,9 +9,10 @@
 // are equivalent regardless of size.
 typedef unsigned char  unint8_t;
 typedef unsigned short unint16_t;
+typedef unsigned int   unint23_t;
 
 // Defines the full size of the header
-#define rdp_HEADER_SIZE 13
+#define rdp_HEADER_SIZE 15
 
 // Bit masks for packet flags
 #define rdp_ACK ((unint8_t) 0b00000001) // Acknowledgment flag
@@ -46,7 +47,7 @@ extern unint16_t rdp_checksum(
     const char* payload
 );
 extern unint16_t rdp_flags();
-extern unint16_t rdp_seq_ack_number();
+extern unint32_t rdp_seq_ack_number();
 extern unint16_t rdp_payload_size();
 extern unint16_t rdp_window_size();
 extern unint16_t rdp_size();

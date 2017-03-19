@@ -12,11 +12,10 @@ static int connected;
 static int reset_count;
 static int timeout_count;
 static int timeout;
-static int start;
 static int file_size;
 
-static int file_pointer;
-static unint16_t seq_number;
+static unint32_t seq_number;
+static unint16_t offset;
 
 /**
  *
@@ -36,12 +35,11 @@ void rdp_sender(
     connected     = 0;
     reset_count   = 0;
     timeout_count = 0;
-    file_pointer  = 0;
     file_size     = rdp_filestream_size();
 
     timeout       = TIMEOUT * 2;
-    seq_number    = (unint16_t) rdp_get_seq_number();
-    start         = seq_number;
+    offset        = rdp_get_seq_number();
+    seq_number    = offset;
 }
 
 /**
@@ -108,17 +106,6 @@ void rdp_sender_connect() {
 /**
  *
  */
-unint16_t seq_diff() {
-    if(seq_number < rdp_seq_ack_number()) {
-        return (0xFFFF - seq_number + rdp_seq_ack_number());
-    } else {
-        return rdp_seq_ack_number() - seq_number;
-    }
-}
-
-/**
- *
- */
 void send_packets() {
 
     int i;
@@ -129,12 +116,11 @@ void send_packets() {
     rdp_log("Sending %d packets...\n", window_size);
 
     // Send DAT packets
-    for(i = 0; i < window_size && file_pointer < file_size; i++) {
+    for(i = 0; i < window_size && (seq_number - offset) < file_size; i++) {
         char payload[PAYLOAD_SIZE + 1];
-        int len  = rdp_filestream_read(payload, PAYLOAD_SIZE, file_pointer);
+        int len  = rdp_filestream_read(payload, PAYLOAD_SIZE, seq_number - offset);
         int size = PAYLOAD_SIZE > len ? len : PAYLOAD_SIZE;
         rdp_send(rdp_DAT, seq_number, size, payload);
-        file_pointer += size;
         seq_number   += size;
     }
 }
@@ -144,10 +130,8 @@ void send_packets() {
  */
 void send_recieved_ACK() {
     timeout_count  = 0;
-    unint16_t diff = seq_diff();
-    file_pointer  += diff;
-    seq_number    += diff;
-    if(file_pointer >= file_size) {
+    seq_number = rdp_seq_ack_number();
+    if(seq_number - offset >= file_size) {
         finished = 1;
     } else {
         send_packets();
@@ -158,9 +142,8 @@ void send_recieved_ACK() {
  *
  */
 void send_recieved_RST() {
-    file_pointer  = 0;
     timeout_count = 0;
-    seq_number    = start;
+    seq_number    = offset;
     if(reset_count++ > MAXIMUM_RESETS) {
         rdp_close_sockets();
         rdp_exit(EXIT_FAILURE, "RDP transmission failed as the connection was reset too many times.");

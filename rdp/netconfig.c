@@ -256,7 +256,7 @@ int rdp_listen(const int timeout_milli) {
  */
 void rdp_send(
     const unint16_t flags,
-    const unint16_t seq_ack_number,
+    const unint32_t seq_ack_number,
     const unint16_t size,
     const char* payload
 ) {

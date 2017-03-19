@@ -7,7 +7,7 @@
 
 // Local variables for maintaining parse states
 static unint16_t flags;
-static unint16_t seq_ack_number;
+static unint32_t seq_ack_number;
 static unint16_t payload_size;
 static unint16_t window_size;
 static unint16_t size;
@@ -41,7 +41,7 @@ unint16_t rdp_packed_size(const unint16_t payload_size) {
  *
  * @param   char*           buffer         a buffer to pack
  * @param   const unint16_t flags          flag byte
- * @param   const unint16_t seq_ack_number sequence or acknowledgement number
+ * @param   const unint32_t seq_ack_number sequence or acknowledgement number
  * @param   const unint16_t size           paylod or window size number
  * @param   const char*     payload        a buffer containing the payload
  * @returns char*                          a pointer to the packed buffer
@@ -49,7 +49,7 @@ unint16_t rdp_packed_size(const unint16_t payload_size) {
 char* rdp_pack(
     char* buffer,
     const unint8_t flags,
-    const unint16_t seq_ack_number,
+    const unint32_t seq_ack_number,
     const unint16_t size,
     const char* payload
 ) {
@@ -59,11 +59,11 @@ char* rdp_pack(
     // Zero the buffer
     rdp_zero(buffer, size + 1);
     // Serialize
-    memcpy(buffer + 0, _magic_,         6);
-    memcpy(buffer + 6, &flags,          1);
-    memcpy(buffer + 7, &seq_ack_number, 2);
-    memcpy(buffer + 9, &size,           2);
-    memcpy(buffer + 11, &checksum, 2);
+    memcpy(buffer + 0,  _magic_,         6);
+    memcpy(buffer + 6,  &flags,          1);
+    memcpy(buffer + 7,  &seq_ack_number, 4);
+    memcpy(buffer + 11, &size,           2);
+    memcpy(buffer + 13, &checksum,       2);
     if(flags & rdp_DAT) {
         memcpy(buffer + rdp_HEADER_SIZE, payload, size);
     }
@@ -93,14 +93,14 @@ int rdp_parse(char* buffer) {
     // Deserialize
     memcpy(_magic_,         buffer + 0,  6);
     memcpy(&flags,          buffer + 6,  1);
-    memcpy(&seq_ack_number, buffer + 7,  2);
-    memcpy(&size,           buffer + 9,  2);
-    memcpy(&checksum,       buffer + 11, 2);
+    memcpy(&seq_ack_number, buffer + 7,  4);
+    memcpy(&size,           buffer + 11,  2);
+    memcpy(&checksum,       buffer + 13, 2);
     if(flags & rdp_DAT) {
-        memcpy(&payload_size, buffer + 9, 2);
+        memcpy(&payload_size, buffer + 11, 2);
         memcpy(&payload, buffer + rdp_HEADER_SIZE, size);
     } else {
-        memcpy(&window_size, buffer + 9, 2);
+        memcpy(&window_size, buffer + 11, 2);
     }
     size = rdp_packed_size(payload_size);
 
@@ -121,7 +121,7 @@ int rdp_parse(char* buffer) {
  */
 unint16_t rdp_checksum(
     const unint8_t flags,
-    const unint16_t seq_ack_number,
+    const unint32_t seq_ack_number,
     const unint16_t size,
     const char* payload
 ) {
@@ -130,10 +130,10 @@ unint16_t rdp_checksum(
     char* _magic_    = "CSC361";
     int payload_size = 0;
 
-    memcpy(buffer + 0, _magic_,         6);
-    memcpy(buffer + 6, &flags,          1);
-    memcpy(buffer + 7, &seq_ack_number, 2);
-    memcpy(buffer + 9, &size,           2);
+    memcpy(buffer + 0,  _magic_,         6);
+    memcpy(buffer + 6,  &flags,          1);
+    memcpy(buffer + 7,  &seq_ack_number, 4);
+    memcpy(buffer + 11, &size,           2);
     if(flags & rdp_DAT) {
         memcpy(buffer + rdp_HEADER_SIZE - 2, payload, size);
     };
@@ -152,7 +152,7 @@ unint16_t rdp_checksum(
 
 // Getters
 unint16_t rdp_flags() { return flags; }
-unint16_t rdp_seq_ack_number() { return seq_ack_number; }
+unint32_t rdp_seq_ack_number() { return seq_ack_number; }
 unint16_t rdp_payload_size() { return payload_size; }
 unint16_t rdp_window_size() { return window_size; }
 unint16_t rdp_size() { return size; }

@@ -7,7 +7,7 @@
 #include "util.h"
 
 static char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
-static unint16_t payload_buffer_seq[WINDOW_SIZE];
+static unint32_t payload_buffer_seq[WINDOW_SIZE];
 
 static int recieved_packets;
 static int reset_count;
@@ -18,8 +18,8 @@ static int disconnect;
 static int disconnecting;
 
 static unint16_t current_window_size;
-static unint16_t ack_number;
-static unint16_t last_ack;
+static unint32_t ack_number;
+static unint32_t last_ack;
 
 /**
  * @param const char* reciever_ip
