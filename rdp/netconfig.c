@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <time.h>
 #include "filestream.h"
 #include "netconfig.h"
 #include "util.h"
