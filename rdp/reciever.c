@@ -93,26 +93,24 @@ void recieved_DAT() {
         ack_number += rdp_payload_size();
 
         // Dequeue data
-        if(current_window_size != WINDOW_SIZE) {
-            printf("[");
-            for(i = 0; i < WINDOW_SIZE; i++) {
-                printf("%d,", payload_buffer_seq[i]);
-            }
-            printf("]\n");
-            int dequeue = 0;
-            do {
-                for(i = 0; i < WINDOW_SIZE; i++) {
-                    if(payload_buffer_seq[i] == ack_number) {
-                        char* payload = payload_buffer + (i * rdp_MAX_PACKET_SIZE);
-                        rdp_filestream_write(payload, strlen(payload));
-                        ack_number           += strlen(payload);
-                        payload_buffer_seq[i] = -1;
-                        dequeue               = 1;
-                        current_window_size++;
-                    }
-                }
-            } while(dequeue);
+        printf("[");
+        for(i = 0; i < WINDOW_SIZE; i++) {
+            printf("%d,", payload_buffer_seq[i]);
         }
+        printf("]\n");
+        int dequeue = 0;
+        do {
+            for(i = 0; i < WINDOW_SIZE; i++) {
+                if(payload_buffer_seq[i] == ack_number) {
+                    char* payload = payload_buffer + (i * rdp_MAX_PACKET_SIZE);
+                    rdp_filestream_write(payload, strlen(payload));
+                    ack_number           += strlen(payload);
+                    payload_buffer_seq[i] = -1;
+                    dequeue               = 1;
+                    current_window_size++;
+                }
+            }
+        } while(dequeue);
     } else if(current_window_size == 0) {
         re_ack();
     } else {
