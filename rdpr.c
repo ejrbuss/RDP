@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "rdp/rdp.h"
+#include "rdp/reciever.h"
 
 void rdps_test();
 

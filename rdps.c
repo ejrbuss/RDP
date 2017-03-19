@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "rdp/rdp.h"
+#include "rdp/sender.h"
 
 void rdps_test();
 
