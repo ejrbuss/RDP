@@ -39,7 +39,7 @@ void rdp_sender(
     file_pointer  = 0;
     file_size     = rdp_filestream_size();
 
-    timeout       = TIMEOUT * 1.1;
+    timeout       = TIMEOUT * 2;
     seq_number    = (unint16_t) rdp_get_seq_number();
     start         = seq_number;
 }

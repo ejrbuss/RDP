@@ -31,7 +31,7 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
     rdp_open_source_socket(reciever_ip, reciever_port);
 
     current_window_size = WINDOW_SIZE;
-    timeout             = TIMEOUT * 0.9;
+    timeout             = TIMEOUT / 2;
     recieved_packets    = 0;
     reset_count         = 0;
     timeout_count       = 0;
