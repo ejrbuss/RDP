@@ -179,8 +179,8 @@ void rdp_sender_stats() {
         "ACK packets received: %d\n"
         "RST packets received: %d\n"
         "total time duration (second): %d\n",
-        stats[stat_send_bytes],
-        stats[stat_send_bytes_unique],
+        stats[stat_sent_bytes],
+        stats[stat_sent_bytes_unique],
         stats[stat_sent_DAT],
         stats[stat_sent_DAT_unique],
         stats[stat_sent_SYN],

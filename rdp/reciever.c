@@ -196,7 +196,7 @@ void rdp_reciever_stats() {
         stats[stat_recieved_DAT],
         stats[stat_recieved_DAT_unique],
         stats[stat_recieved_SYN],
-        stat[stat_recieved_FIN],
+        stats[stat_recieved_FIN],
         stats[stat_recieved_RST],
         stats[stat_sent_ACK],
         stats[stat_sent_RST],
