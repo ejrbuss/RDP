@@ -214,7 +214,7 @@ int rdp_listen(const int timeout_milli) {
         destination_port,
         source_ip,
         source_port,
-        rdp_flag_names[rdp_flags() && 0xFFFFF],
+        rdp_flag_names[rdp_flags() && 0b11111],
         rdp_seq_ack_number(),
         rdp_payload_size() | rdp_window_size()
     );
@@ -258,8 +258,6 @@ void rdp_send(
 ) {
     int packed_size = rdp_packed_size(flags & rdp_DAT ? size : 0);
 
-    rdp_log("Sending flags: %d\n", flags & 0xFFFFF);
-
     // Compute statistics
     stats[stat_sent_SYN]          += !!(flags & rdp_SYN);
     stats[stat_sent_FIN]          += !!(flags & rdp_FIN);
@@ -286,7 +284,7 @@ void rdp_send(
             source_port,
             destination_ip,
             destination_port,
-            rdp_flag_names[flags & 0xFFFFF],
+            rdp_flag_names[flags & 0b11111],
             seq_ack_number,
             size
         );
