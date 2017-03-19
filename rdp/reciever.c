@@ -30,15 +30,15 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
     // Init source socket and socket address
     rdp_open_source_socket(reciever_ip, reciever_port);
 
-    current_window_size      = WINDOW_SIZE;
-    timeout          = TIMEOUT * 0.9;
-    recieved_packets = 0;
-    reset_count      = 0;
-    timeout_count    = 0;
-    connected        = 0;
-    disconnect       = 0;
-    disconnecting    = 0;
-    last_ack         = 0;
+    current_window_size = WINDOW_SIZE;
+    timeout             = TIMEOUT * 0.9;
+    recieved_packets    = 0;
+    reset_count         = 0;
+    timeout_count       = 0;
+    connected           = 0;
+    disconnect          = 0;
+    disconnecting       = 0;
+    last_ack            = 0;
 
     // Mark all of the payload buffer as available
     int i;
@@ -95,9 +95,9 @@ void recieved_DAT() {
                     if(payload_buffer_seq[i] == ack_number) {
                         char* payload = payload_buffer + (i * rdp_MAX_PACKET_SIZE);
                         rdp_filestream_write(payload, strlen(payload));
-                        ack_number         += strlen(payload);
+                        ack_number           += strlen(payload);
                         payload_buffer_seq[i] = -1;
-                        dequeue             = 1;
+                        dequeue               = 1;
                         current_window_size++;
                     }
                 }
