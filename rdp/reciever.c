@@ -63,9 +63,9 @@ void re_ack() {
  *
  */
 void recieved_SYN() {
+    rdp_log("RECIEVED SYN: %d\n", window_size);
     connected  = 1;
     ack_number = rdp_seq_ack_number() + 1;
-    rdp_log("RECIEVED SYN: %d\n", window_size);
     re_ack();
 }
 
@@ -164,7 +164,6 @@ void recieved_timeout() {
  */
 void rdp_reciever_recieve() {
     while(!disconnect) {
-        rdp_log("WINDOW SIZE: %d\n", window_size);
         switch(rdp_listen(timeout)) {
             case event_SYN: recieved_SYN(); break;
             case event_FIN: recieved_FIN(); break;
