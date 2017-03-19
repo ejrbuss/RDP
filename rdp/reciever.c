@@ -138,7 +138,10 @@ void recieved_RST() {
  *
  */
 void recieved_timeout() {
-    if(connected) {
+    if(disconnecting) {
+        rdp_close_sockets();
+        disconnect = 1;
+    } else if(connected) {
         rdp_log("Timed out.\n"
                 "    Connected:     %d\n"
                 "    Disconnecting: %d\n",
@@ -151,10 +154,6 @@ void recieved_timeout() {
         }
         re_ack();
 
-    }
-    if(disconnecting) {
-        rdp_close_sockets();
-        disconnect = 1;
     }
 }
 
