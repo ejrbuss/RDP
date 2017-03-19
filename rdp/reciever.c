@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "reciever.h"
 #include "filestream.h"
-#include "protocol.c"
+#include "protocol.h"
 #include "netconfig.h"
 #include "util.h"
 
