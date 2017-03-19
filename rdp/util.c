@@ -63,8 +63,8 @@ void rdp_log_hex(const char* src, int length) {
 void rdp_no_newlines(char* src) {
     int i;
     for(i = 0; i < strlen(src); i++) {
-        if(src[i] == '\n' || src[i] == ' ') {
-            src[i] = ' ';
+        if(src[i] == '\n') {
+            src[i] = 'N';
         }
     }
 }

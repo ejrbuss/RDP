@@ -219,6 +219,8 @@ int rdp_listen(const int timeout_milli) {
         rdp_payload_size() | rdp_window_size()
     );
 
+    rdp_log_hex(rdp_payload(), rdp_payload_size());
+
     // Compute statistics
     stats[stat_recieved_SYN]          += !!(rdp_flags() & rdp_SYN);
     stats[stat_recieved_FIN]          += !!(rdp_flags() & rdp_FIN);
