@@ -122,7 +122,9 @@ unint16_t seq_diff() {
 void send_packets() {
 
     int i;
-    int window_size = rdp_window_size();
+    int window_size = rdp_window_size() > 0
+        ? rdp_window_size()
+        : 1;
 
     rdp_log("Sending %d packets...\n", window_size);
 

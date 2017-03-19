@@ -210,3 +210,10 @@ void rdp_reciever_stats() {
         (stats[stat_end_time] - stats[stat_start_time])
     );
 }
+/*
+
+tc qdisc show
+tc qdisc add dev br0 root netem drop 10%
+tc qdisc del dev br0 root netem drop 10%
+
+*/
