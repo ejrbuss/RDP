@@ -50,10 +50,10 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
  */
 void re_ack() {
     if(ack_number == last_ack) {
-        send_rdp(rdp_ACK | rdp_RES, ack_number, window_size, "");
+        rdp_send(rdp_ACK | rdp_RES, ack_number, window_size, "");
     } else {
         last_ack = ack_number;
-        send_rdp(rdp_ACK, ack_number, window_size, "");
+        rdp_send(rdp_ACK, ack_number, window_size, "");
     }
 }
 
