@@ -27,7 +27,7 @@ unint16_t last_ack;
 void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
 
     // Init source socket and socket address
-    rdp_open_source_socket(reciever_ip, destination_ip);
+    rdp_open_source_socket(reciever_ip, reciever_port);
 
     window_size      = WINDOW_SIZE;
     timeout          = TIMEOUT;
@@ -41,7 +41,7 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
     // Mark all of the payload buffer as available
     int i;
     for(i = 0; i < WINDOW_SIZE; i++) {
-        sequence_numbers[i] = -1;
+        payload_buffer_seq[i] = -1;
     }
 }
 
@@ -89,11 +89,11 @@ void recieve_DAT() {
             int dequeue = 0;
             do {
                 for(i = 0; i < WINDOW_SIZE; i++) {
-                    if(sequence_numbers[i] == ack_number) {
+                    if(payload_buffer_seq[i] == ack_number) {
                         char* payload = payload_buffer + (i * rdp_MAX_PACKET_SIZE);
                         rdp_filestream_write(payload, strlen(payload));
                         ack_number         += strlen(payload);
-                        sequence_numbers[i] = -1;
+                        payload_buffer_seq[i] = -1;
                         dequeue             = 1;
                         window_size++;
                     }
@@ -106,9 +106,9 @@ void recieve_DAT() {
     } else {
         // Queue data
         for(i = 0; i < WINDOW_SIZE; i++) {
-            if(sequence_numbers[i] == -1) {
+            if(payload_buffer_seq[i] == -1) {
                 char* payload = rdp_payload();
-                sequence_numbers[i] = rdp_seq_ack_number();
+                payload_buffer_seq[i] = rdp_seq_ack_number();
                 rdp_zero(payload_buffer + (i * rdp_MAX_PACKET_SIZE), rdp_MAX_PACKET_SIZE);
                 memcpy(payload_buffer + (i * rdp_MAX_PACKET_SIZE), &payload, rdp_payload_size());
                 break;
@@ -172,7 +172,7 @@ void rdp_reciever_recieve() {
                     re_ack();
                 }
                 break;
-            case timeout: recieve_timeout(); break;
+            case event_timeout: recieve_timeout(); break;
         }
     }
 }
