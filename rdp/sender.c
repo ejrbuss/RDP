@@ -107,9 +107,9 @@ void rdp_sender_connect() {
 /**
  *
  */
-void seq_diff() {
+unint16_t seq_diff() {
     if(seq_number < rdp_seq_ack_number()) {
-        return (0xFFFF - seq_number + rdp_seq_ack_number())
+        return (0xFFFF - seq_number + rdp_seq_ack_number());
     } else {
         return rdp_seq_ack_number() - seq_number;
     }
@@ -121,9 +121,10 @@ void seq_diff() {
 void send_packets() {
 
     int i;
+    int window_size = rdp_window_size();
     // Send DAT packets
-    for(i = 0; i < rdp_window_size(); i++) {
-        char[PAYLOAD_SIZE + 1];
+    for(i = 0; i < rdp_window_size && file_pointer < file_size; i++) {
+        char payload[PAYLOAD_SIZE + 1];
         int len  = rdp_filestream_read(paylaod, PAYLOAD_SIZE, file_pointer);
         int size = PAYLOAD_SIZE > len ? PAYLOAD_SIZE : len;
         rdp_send(rdp_DAT, seq_number, size, payload);
