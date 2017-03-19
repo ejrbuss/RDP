@@ -207,8 +207,6 @@ int rdp_listen(const int timeout_milli) {
         rdp_open_destination_socket(ip, port);
     }
 
-    rdp_log("recieved flags: %d\n", rdp_flags());
-
     // Log the packet
     rdp_log_packet(
         rdp_flags() & rdp_RES ? "R" : "r",
@@ -216,7 +214,7 @@ int rdp_listen(const int timeout_milli) {
         destination_port,
         source_ip,
         source_port,
-        rdp_flag_names[rdp_flags() && 0b11111],
+        rdp_flag_names[rdp_flags() & 0b11111],
         rdp_seq_ack_number(),
         rdp_payload_size() | rdp_window_size()
     );
