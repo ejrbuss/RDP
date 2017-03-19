@@ -228,7 +228,7 @@ int listen_rdp(const int timeout_milli) {
     stats[stat_recieved_DAT]          += !!(rdp_flags() & rdp_DAT);
     stats[stat_recieved_ACK]          += !!(rdp_flags() & rdp_ACK);
     stats[stat_recieved_RST]          += !!(rdp_flags() & rdp_RST);
-    stats[stat_recieved_bytes_unique] += !!(rdp_flags & rdp_RES) * packed_size;
+    stats[stat_recieved_bytes_unique] += !!(rdp_flags() & rdp_RES) * packed_size;
     stats[stat_recieved_bytes]        += packed_size;
 
     // Determine event
@@ -265,8 +265,8 @@ void send_rdp(
     stats[stat_sent_DAT]          += !!(flags & rdp_DAT);
     stats[stat_sent_RST]          += !!(flags & rdp_RST);
     stats[stat_sent_ACK]          += !!(flags & rdp_ACK);
-    stats[stat_send_bytes_unique] += !!(flags & rdp_RES) * packed_size;
-    stats[stat_send_bytes]        += packed_size;
+    stats[stat_sent_bytes_unique] += !!(flags & rdp_RES) * packed_size;
+    stats[stat_sent_bytes]        += packed_size;
 
     if(sendto(
         source_socket,
@@ -297,6 +297,6 @@ void send_rdp(
  *
  * @returns int* the array of stats
  */
-int* stats() {
+int* rdp_stats() {
     return stats;
 }
