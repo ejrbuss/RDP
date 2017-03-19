@@ -207,6 +207,8 @@ int rdp_listen(const int timeout_milli) {
         rdp_open_destination_socket(ip, port);
     }
 
+    rdp_log("recieved flags: %d\n", rdp_flags());
+
     // Log the packet
     rdp_log_packet(
         rdp_flags() & rdp_RES ? "R" : "r",
