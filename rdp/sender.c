@@ -134,9 +134,6 @@ void send_packets() {
         file_pointer += size;
         seq_number   += size;
     }
-    if(file_pointer >= file_size) {
-        finished = 1;
-    }
 }
 
 /**
@@ -146,7 +143,11 @@ void send_recieved_ACK() {
     unint16_t diff = seq_diff();
     file_pointer += diff;
     seq_number   += diff;
-    send_packets();
+    if(file_pointer >= file_size) {
+        finished = 1;
+    } else {
+        send_packets();
+    }
 }
 
 /**
