@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "reciever.h"
 #include "filestream.h"
 #include "protocol.h"
@@ -78,7 +79,7 @@ void recieve_FIN() {
 /**
  *
  */
-void recieve_DAT() {
+void recieved_DAT() {
     int i;
     // In order check
     if(rdp_seq_ack_number() == ack_number) {
