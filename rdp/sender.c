@@ -123,7 +123,7 @@ void send_packets() {
     int i;
     int window_size = rdp_window_size();
     // Send DAT packets
-    for(i = 0; i < rdp_window_size && file_pointer < file_size; i++) {
+    for(i = 0; i < window_size && file_pointer < file_size; i++) {
         char payload[PAYLOAD_SIZE + 1];
         int len  = rdp_filestream_read(paylaod, PAYLOAD_SIZE, file_pointer);
         int size = PAYLOAD_SIZE > len ? PAYLOAD_SIZE : len;
