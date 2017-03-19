@@ -14,7 +14,7 @@
 #define event_RST        3
 #define event_ACK        4
 #define event_bad_packet 5
-#define event_timeout    6;
+#define event_timeout    6
 
 // Stat names
 typedef enum stat_t {
