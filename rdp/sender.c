@@ -1,4 +1,6 @@
 #include "sender.h"
+#include "filestream.h"
+#include "protocol.c"
 #include "netconfig.h"
 #include "util.h"
 

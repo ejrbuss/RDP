@@ -1,7 +1,8 @@
 #include "reciever.h"
+#include "filestream.h"
+#include "protocol.c"
 #include "netconfig.h"
 #include "util.h"
-#include "filestream.h"
 
 const char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
 const unint16_t payload_buffer_seq[WINDOW_SIZE];
