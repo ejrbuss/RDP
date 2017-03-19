@@ -22,9 +22,9 @@ void rdp_sender(
     const char* reciever_port
 ) {
     // Init destination socket and socket address
-    open_destination_socket(reciever_ip, reciever_port);
+    rdp_open_destination_socket(reciever_ip, reciever_port);
     // Init source socket and socket address
-    open_source_socket(sender_ip, sender_port);
+    rdp_open_source_socket(sender_ip, sender_port);
 
     connected     = 0;
     reset_count   = 0;
