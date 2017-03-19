@@ -204,7 +204,7 @@ int rdp_listen(const int timeout_milli) {
             rdp_close_sockets();
             rdp_exit(EXIT_FAILURE, "Failed to read destination IP:port from recieved packet: %s\n", strerror(errno));
         }
-        open_destination_socket(ip, port);
+        rdp_open_destination_socket(ip, port);
     }
 
     // Log the packet

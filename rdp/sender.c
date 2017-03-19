@@ -43,7 +43,7 @@ void connect_recieved_ACK() {
         seq_number++;
         connected = 1;
     } else {
-        send_rdp(rdp_SYN | rdp_RES, seq_number, 0, "");
+        rdp_send(rdp_SYN | rdp_RES, seq_number, 0, "");
     }
 }
 
@@ -56,7 +56,7 @@ void connect_recieved_reset() {
         rdp_close_sockets();
         rdp_exit(EXIT_FAILURE, "RDP transmission failed as the connection was reset too many times.");
     }
-    send_rdp(rdp_SYN | rdp_RES, seq_number, 0, "");
+    rdp_send(rdp_SYN | rdp_RES, seq_number, 0, "");
 }
 
 /**
@@ -68,7 +68,7 @@ void connect_recieved_timeout() {
         rdp_exit(EXIT_FAILURE, "RDP transimmision fauked as the connection timed out too many times.");
     }
     rdp_log("Request timed out. Retrying...");
-    send_rdp(rdp_SYN | rdp_RES, seq_number, 0, "");
+    rdp_send(rdp_SYN | rdp_RES, seq_number, 0, "");
 }
 
 /**
@@ -77,7 +77,7 @@ void connect_recieved_timeout() {
 void rdp_sender_connect() {
 
     rdp_log("Establishing connection...");
-    send_rdp(rdp_SYN, seq_number, 0, "");
+    rdp_send(rdp_SYN, seq_number, 0, "");
 
     while(!connected) {
         switch(rdp_listen(timeout)) {
@@ -87,7 +87,7 @@ void rdp_sender_connect() {
             case event_FIN:
             case event_DAT:
             case event_bad_packet:
-                send_rdp(rdp_SYN | rdp_RES, seq_number, 0, "");
+                rdp_send(rdp_SYN | rdp_RES, seq_number, 0, "");
                 break;
             case event_timeout: connect_recieved_timeout(); break;
         }
@@ -104,7 +104,7 @@ void rdp_sender_send() {
     for(i = 0; i < size; i += 700) {
         char payload[701];
         rdp_filestream_read(payload, 700, i);
-        send_rdp(rdp_DAT, seq_number, 700, payload);
+        rdp_send(rdp_DAT, seq_number, 700, payload);
         seq_number += 700;
     }
 }
@@ -118,7 +118,7 @@ void disconnect_recieved_ACK() {
         connected = 0;
         rdp_log("Disconnected.");
     }
-    send_rdp(rdp_FIN | rdp_RES, seq_number, 0, "");
+    rdp_send(rdp_FIN | rdp_RES, seq_number, 0, "");
 }
 
 /**
@@ -129,7 +129,7 @@ void disconnect_recieved_RST() {
     if(reset_count++ > MAXIMUM_RESETS) {
         rdp_exit(EXIT_FAILURE, "RDP transmission failed as the connection was reset too many times.");
     }
-    send_rdp(rdp_FIN | rdp_RES, seq_number, 0, "");
+    rdp_send(rdp_FIN | rdp_RES, seq_number, 0, "");
 }
 
 /**
@@ -141,7 +141,7 @@ void disconnect_recieved_timeout() {
         rdp_exit(EXIT_FAILURE, "RDP transimmision failed as the connection timed out too many times.");
     }
     rdp_log("Request timed out. Retrying...");
-    send_rdp(rdp_FIN | rdp_RES, seq_number, 0, "");
+    rdp_send(rdp_FIN | rdp_RES, seq_number, 0, "");
 }
 
 /**
@@ -150,7 +150,7 @@ void disconnect_recieved_timeout() {
 void rdp_sender_disconnect() {
 
     rdp_log("Disconnecting...");
-    send_rdp(rdp_FIN, seq_number, 0, "");
+    rdp_send(rdp_FIN, seq_number, 0, "");
 
     while(connected) {
         switch(rdp_listen(timeout)) {
@@ -160,7 +160,7 @@ void rdp_sender_disconnect() {
             case event_FIN:
             case event_DAT:
             case event_bad_packet:
-                send_rdp(rdp_FIN | rdp_RES, seq_number, 0, "");
+                rdp_send(rdp_FIN | rdp_RES, seq_number, 0, "");
                 break;
             case event_timeout: disconnect_recieved_timeout(); break;
         }
