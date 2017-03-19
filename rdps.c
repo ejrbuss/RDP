@@ -56,6 +56,9 @@ int main(int argc, char** argv) {
         default: break;
     }
 
+
+    // Open filestream
+    rdp_filestream_open(args[sender_file_name], "r");
     // Configure network
     rdp_sender(
         args[sender_ip],
@@ -63,8 +66,6 @@ int main(int argc, char** argv) {
         args[receiver_ip],
         args[receiver_port]
     );
-    // Open filestream
-    rdp_filestream_open(args[sender_file_name], "r");
     // Open connection
     rdp_sender_connect();
     // Send file
