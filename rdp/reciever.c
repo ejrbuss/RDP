@@ -3,7 +3,6 @@
 #include <string.h>
 #include "reciever.h"
 #include "filestream.h"
-#include "netconfig.h"
 #include "util.h"
 
 char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
