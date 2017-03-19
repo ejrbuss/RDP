@@ -7,7 +7,7 @@
 #include "util.h"
 
 const char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
-const unint16_t payload_buffer_seq[WINDOW_SIZE];
+unint16_t payload_buffer_seq[WINDOW_SIZE];
 
 int recieved_packets;
 int reset_count;
@@ -102,7 +102,6 @@ void recieve_DAT() {
         }
     } else if(window_size == 0) {
         re_ack();
-        break;
     } else {
         // Queue data
         for(i = 0; i < WINDOW_SIZE; i++) {
