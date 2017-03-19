@@ -37,9 +37,9 @@ void rdp_sender(
  *
  */
 void connect_recieved_ACK() {
-    if(rdp_seq_ack_number() == sequence_number + 1) {
+    if(rdp_seq_ack_number() == seq_number + 1) {
         rdp_log("Connected.");
-        sequence_number++;
+        seq_number++;
         connected = 1;
     } else {
         send_rdp(rdp_SYN | rdp_RES, seq_number, 0, "");
@@ -103,8 +103,8 @@ void rdp_sender_send() {
     for(i = 0; i < size; i += 700) {
         char payload[701];
         rdp_filestream_read(payload, 700, i);
-        send_rdp(rdp_DAT, sequence_number, 700, payload);
-        sequence_number += 700;
+        send_rdp(rdp_DAT, seq_number, 700, payload);
+        seq_number += 700;
     }
 }
 
@@ -112,7 +112,7 @@ void rdp_sender_send() {
  *
  */
 void disconnect_recieved_ACK() {
-    if(rdp_seq_ack_number() == sequence_number + 1) {
+    if(rdp_seq_ack_number() == seq_number + 1) {
         rdp_close_sockets();
         connected = 0;
         rdp_log("Disconnected.");
@@ -149,7 +149,7 @@ void disconnect_recieved_timeout() {
 void rdp_sender_disconnect() {
 
     rdp_log("Disconnecting...");
-    send_rdp(rdp_FIN, sequence_number, 0, "");
+    send_rdp(rdp_FIN, seq_number, 0, "");
 
     while(connected) {
         switch(listen_rdp(timeout)) {
