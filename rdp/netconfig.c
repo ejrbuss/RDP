@@ -230,8 +230,6 @@ int rdp_listen(const int timeout_milli) {
     stats[stat_recieved_bytes_unique] += !(rdp_flags() & rdp_RES) * rdp_size();
     stats[stat_recieved_bytes]        += rdp_size();
 
-    rdp_log("%d", stats[stat_recieved_bytes]);
-
     // Determine event
     if(parse == 0) {
         return event_bad_packet;
@@ -268,8 +266,6 @@ void rdp_send(
     stats[stat_sent_ACK]          += !!(flags & rdp_ACK);
     stats[stat_sent_bytes_unique] += !(flags & rdp_RES) * packed_size;
     stats[stat_sent_bytes]        += packed_size;
-
-    rdp_log("%d", stats[stat_sent_bytes]);
 
     if(sendto(
         source_socket,
