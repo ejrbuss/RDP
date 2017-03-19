@@ -122,6 +122,9 @@ void send_packets() {
 
     int i;
     int window_size = rdp_window_size();
+
+    rdp_log("Sending %d packets...\n", window_size);
+
     // Send DAT packets
     for(i = 0; i < window_size && file_pointer < file_size; i++) {
         char payload[PAYLOAD_SIZE + 1];
@@ -130,6 +133,9 @@ void send_packets() {
         rdp_send(rdp_DAT, seq_number, size, payload);
         file_pointer += size;
         seq_number   += size;
+    }
+    if(file_pointer >= file_size) {
+        finished = 1;
     }
 }
 
@@ -140,9 +146,6 @@ void send_recieved_ACK() {
     unint16_t diff = seq_diff();
     file_pointer += diff;
     seq_number   += diff;
-    if(file_pointer >= file_size) {
-        finished = 1;
-    }
     send_packets();
 }
 
