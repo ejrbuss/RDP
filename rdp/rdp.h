@@ -15,7 +15,6 @@ const char* rdp_logo = "\n"
 // Headers
 #include "filestream.h"
 #include "netconfig.h"
-#include "protocol.h"
 #include "util.h"
 
 #endif
