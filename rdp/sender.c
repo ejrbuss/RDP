@@ -138,8 +138,8 @@ void send_packets() {
  */
 void send_recieved_ACK() {
     unint16_t diff = seq_diff();
-    file_point += diff;
-    seq_number += diff;
+    file_pointer += diff;
+    seq_number   += diff;
     if(file_pointer >= file_size) {
         finished = 1;
     }
