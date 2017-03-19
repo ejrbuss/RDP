@@ -29,7 +29,7 @@ void rdp_sender(
     connected     = 0;
     reset_count   = 0;
     timeout_count = 0;
-    timeout       = 0;
+    timeout       = TIMEOUT;
     seq_number    = (unint16_t) rdp_get_seq_number();
 }
 
