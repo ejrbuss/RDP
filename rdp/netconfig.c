@@ -13,7 +13,7 @@
 #include "util.h"
 
 /* Stat tracking */
-const int stats[stat_length];
+int stats[stat_length];
 
 /* Buffers */
 char recieve_buffer[SOCK_BUFFER_SIZE];
@@ -69,7 +69,7 @@ void open_source_socket(const char* ip, const char* port) {
         (const void*) &option,
         sizeof(int)
     )) {
-        rdp_close_sockets()
+        rdp_close_sockets();
         rdp_exit(EXIT_FAILURE, "Failed to set socket option: %s\n", strerror(errno));
     }
 
@@ -83,8 +83,7 @@ void open_source_socket(const char* ip, const char* port) {
         (struct sockaddr*) &source_address,
         sizeof(source_address)
     )) {
-        rdp_close_sockets()
-        rdp_exit(EXIT_FAILURE, "Failed to bind socket: %s\n", strerror(errno));
+        rdp_close_sockets();        rdp_exit(EXIT_FAILURE, "Failed to bind socket: %s\n", strerror(errno));
     }
 
     // Prepare stats
@@ -148,7 +147,7 @@ void rdp_close_sockets() {
  * @param   const int timeout_milli
  * @returns int       the event
  */
-int listen_rdp(const int timeout_milli) {
+event_t listen_rdp(const int timeout_milli) {
 
     int select_result;
     ssize_t recsize;
@@ -220,7 +219,6 @@ int listen_rdp(const int timeout_milli) {
         rdp_seq_ack_number(),
         rdp_payload_size() | rdp_window_size()
     );
-    rdp_log_hex(recieve_buffer, rdp_size());
 
     int packed_size = rdp_packed_size(rdp_flags() & rdp_DAT ? rdp_size() : 0);
 
@@ -282,7 +280,7 @@ void send_rdp(
         rdp_exit(EXIT_FAILURE, "Error sending packet: %s\n", strerror(errno));
     } else {
         rdp_log_packet(
-            flag & rdp_RES ? "S" : "s",
+            flags & rdp_RES ? "S" : "s",
             source_ip,
             source_port,
             destination_ip,
