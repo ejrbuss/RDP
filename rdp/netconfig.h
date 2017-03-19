@@ -25,7 +25,7 @@ extern void rdp_open_source_socket(const char* ip, const char* port);
 extern void rdp_open_destination_socket(const char* ip, const char* port);
 extern void rdp_close_sockets();
 extern void rdp_send();
-extern event_t rdp_listen();
+extern int rdp_listen();
 extern int* rdp_stats();
 
 #endif

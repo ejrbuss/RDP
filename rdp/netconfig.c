@@ -147,7 +147,7 @@ void rdp_close_sockets() {
  * @param   const int timeout_milli
  * @returns int       the event
  */
-event_t listen_rdp(const int timeout_milli) {
+int listen_rdp(const int timeout_milli) {
 
     int select_result;
     ssize_t recsize;
@@ -280,7 +280,7 @@ void send_rdp(
         rdp_exit(EXIT_FAILURE, "Error sending packet: %s\n", strerror(errno));
     } else {
         rdp_log_packet(
-            flags & rdp_RES ? "S" : "s",
+            rdp_flags & rdp_RES ? "S" : "s",
             source_ip,
             source_port,
             destination_ip,
