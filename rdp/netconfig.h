@@ -14,7 +14,7 @@ enum event_t { event_SYN, event_FIN, event_DAT, event_RST, event_ACK, event_bad_
 // Stat names
 enum stat_t {
     stat_start_time,   stat_end_time,
-    stat_send_bytes,   stat_sent_bytes_unique,   stat_recieved_bytes, stat_recieved_bytes_unique,
+    stat_sent_bytes,   stat_sent_bytes_unique,   stat_recieved_bytes, stat_recieved_bytes_unique,
     stat_sent_DAT,     stat_sent_DAT_unique,     stat_recieved_DAT,   stat_recieved_DAT_unique,
     stat_sent_SYN,     stat_sent_FIN,            stat_sent_RST,       stat_sent_ACK,
     stat_recieved_SYN, stat_recieved_FIN,        stat_recieved_RST,   stat_recieved_ACK,

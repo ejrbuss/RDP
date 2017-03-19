@@ -280,7 +280,7 @@ void send_rdp(
         rdp_exit(EXIT_FAILURE, "Error sending packet: %s\n", strerror(errno));
     } else {
         rdp_log_packet(
-            rdp_flags & rdp_RES ? "S" : "s",
+            flags & rdp_RES ? "S" : "s",
             source_ip,
             source_port,
             destination_ip,
