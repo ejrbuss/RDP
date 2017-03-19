@@ -12,17 +12,6 @@
 #include "protocol.h"
 #include "util.h"
 
-enum event_t { event_SYN, event_FIN, event_DAT, event_RST, event_ACK, event_bad_packet, event_timeout };
-
-enum stat_t {
-    stat_start_time,   stat_end_time,
-    stat_sent_bytes,   stat_sent_bytes_unique,   stat_recieved_bytes, stat_recieved_bytes_unique,
-    stat_sent_DAT,     stat_sent_DAT_unique,     stat_recieved_DAT,   stat_recieved_DAT_unique,
-    stat_sent_SYN,     stat_sent_FIN,            stat_sent_RST,       stat_sent_ACK,
-    stat_recieved_SYN, stat_recieved_FIN,        stat_recieved_RST,   stat_recieved_ACK,
-    stat_length
-};
-
 /* Stat tracking */
 int stats[stat_length];
 
