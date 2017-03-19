@@ -72,6 +72,7 @@ void recieved_SYN() {
  *
  */
 void recieved_FIN() {
+    timeout_count = 0;
     disconnecting = 1;
     ack_number    = rdp_seq_ack_number() + 1;
     re_ack();
@@ -81,7 +82,11 @@ void recieved_FIN() {
  *
  */
 void recieved_DAT() {
+
     int i;
+
+    timeout_count  = 0;
+
     // In order check
     if(rdp_seq_ack_number() == ack_number) {
         rdp_filestream_write(rdp_payload(), rdp_payload_size());

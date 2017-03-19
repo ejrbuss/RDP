@@ -48,6 +48,7 @@ void rdp_sender(
  *
  */
 void connect_recieved_ACK() {
+    timeout_count  = 0;
     if(rdp_seq_ack_number() == seq_number + 1) {
         rdp_log("Connected.");
         seq_number++;
@@ -140,9 +141,10 @@ void send_packets() {
  *
  */
 void send_recieved_ACK() {
+    timeout_count  = 0;
     unint16_t diff = seq_diff();
-    file_pointer += diff;
-    seq_number   += diff;
+    file_pointer  += diff;
+    seq_number    += diff;
     if(file_pointer >= file_size) {
         finished = 1;
     } else {
