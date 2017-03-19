@@ -3,7 +3,6 @@
 #include <string.h>
 #include "reciever.h"
 #include "filestream.h"
-#include "protocol.h"
 #include "netconfig.h"
 #include "util.h"
 

@@ -9,7 +9,6 @@
 #include <arpa/inet.h>
 #include "filestream.h"
 #include "netconfig.h"
-#include "protocol.h"
 #include "util.h"
 
 /* Stat tracking */

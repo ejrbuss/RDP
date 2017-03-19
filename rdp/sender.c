@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "sender.h"
 #include "filestream.h"
-#include "protocol.h"
 #include "netconfig.h"
 #include "util.h"
 
