@@ -16,16 +16,19 @@ int size         = 0;
  * @param const char* flag open flags
  */
 void rdp_filestream_open(const char* file, const char* flag) {
+    rdp_log("Opening %s...\n", file);
     if(rdp_streq(flag, "w")) {
         file_write = fopen(file, flag);
         if(file_write == NULL) {
             rdp_exit(EXIT_FAILURE, "Cannot open file: %s", file);
         }
+        rdp_log("File opend for writing.");
     } else if(rdp_streq(flag, "r")) {
         file_read = fopen(file, flag);
         if(file_read == NULL) {
             rdp_exit(EXIT_FAILURE, "Cannot open file: %s", file);
         }
+        rdp_log("File opend for reading.");
     } else {
          rdp_exit(EXIT_FAILURE, "Unrecognized flag: %s", flag);
     }
