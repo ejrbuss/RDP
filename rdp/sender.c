@@ -75,7 +75,7 @@ void connect_recieved_RST() {
 void connect_recieved_timeout() {
     if(timeout_count++ > MAXIMUM_TIMEOUTS) {
         rdp_close_sockets();
-        rdp_exit(EXIT_FAILURE, "RDP transimmision fauked as the connection timed out too many times.");
+        rdp_exit(EXIT_FAILURE, "RDP transimmision failed as the connection timed out too many times.");
     }
     rdp_log("Request timed out. Retrying...");
     rdp_send(rdp_SYN | rdp_RES, seq_number, 0, "");

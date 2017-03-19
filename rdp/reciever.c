@@ -65,6 +65,7 @@ void re_ack() {
 void recieved_SYN() {
     connected  = 1;
     ack_number = rdp_seq_ack_number() + 1;
+    rdp_log("RECIEVED SYN: %d\n", window_size);
     re_ack();
 }
 
