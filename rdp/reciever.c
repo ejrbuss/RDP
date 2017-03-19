@@ -112,15 +112,18 @@ void recieved_DAT() {
         re_ack();
     } else {
         // Queue data
-        for(i = 0; i < WINDOW_SIZE; i++) {
-            if(payload_buffer_seq[i] == -1) {
-                char* payload = rdp_payload();
-                payload_buffer_seq[i] = rdp_seq_ack_number();
-                rdp_zero(payload_buffer + (i * rdp_MAX_PACKET_SIZE), rdp_MAX_PACKET_SIZE);
-                memcpy(payload_buffer + (i * rdp_MAX_PACKET_SIZE), &payload, rdp_payload_size());
-                break;
+        if(rdp_seq_ack_number() > ack_number) {
+            for(i = 0; i < WINDOW_SIZE; i++) {
+                if(payload_buffer_seq[i] == -1) {
+                    char* payload = rdp_payload();
+                    payload_buffer_seq[i] = rdp_seq_ack_number();
+                    rdp_zero(payload_buffer + (i * rdp_MAX_PACKET_SIZE), rdp_MAX_PACKET_SIZE);
+                    memcpy(payload_buffer + (i * rdp_MAX_PACKET_SIZE), &payload, rdp_payload_size());
+                    break;
+                }
             }
         }
+
         if(--current_window_size == 0 || ++recieved_packets >= WINDOW_SIZE) {
             recieved_packets = 0;
             re_ack();
