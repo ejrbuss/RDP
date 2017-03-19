@@ -60,7 +60,7 @@ void re_ack() {
 /**
  *
  */
-void recieve_SYN() {
+void recieved_SYN() {
     connected  = 1;
     ack_number = rdp_seq_ack_number() + 1;
     re_ack();
@@ -162,17 +162,17 @@ void recieved_timeout() {
 void rdp_reciever_recieve() {
     loop {
         switch(listen_rdp(timeout)) {
-            case event_SYN: recieve_SYN(); break;
-            case event_FIN: recieve_FIN(); break;
-            case event_DAT: recieve_DAT(); break;
-            case event_RST: recieve_RST(); break;
+            case event_SYN: recieved_SYN(); break;
+            case event_FIN: recieved_FIN(); break;
+            case event_DAT: recieved_DAT(); break;
+            case event_RST: recieved_RST(); break;
             case event_ACK:
             case event_bad_packet:
                 if(connected) {
                     re_ack();
                 }
                 break;
-            case event_timeout: recieve_timeout(); break;
+            case event_timeout: recieved_timeout(); break;
         }
     }
 }
