@@ -14,6 +14,7 @@ int reset_count;
 int timeout_count;
 int timeout;
 int connected;
+int disconnect;
 int disconnecting;
 
 unint16_t window_size;
@@ -35,6 +36,7 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
     reset_count      = 0;
     timeout_count    = 0;
     connected        = 0;
+    disconnect       = 0;
     disconnecting    = 0;
     last_ack         = 0;
 
@@ -152,7 +154,7 @@ void recieved_timeout() {
     }
     if(disconnecting) {
         rdp_close_sockets();
-        return;
+        disconnet = 1;
     }
 }
 
@@ -160,7 +162,7 @@ void recieved_timeout() {
  *
  */
 void rdp_reciever_recieve() {
-    loop {
+    while(!disconnet) {
         switch(rdp_listen(timeout)) {
             case event_SYN: recieved_SYN(); break;
             case event_FIN: recieved_FIN(); break;

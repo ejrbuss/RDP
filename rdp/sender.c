@@ -117,8 +117,9 @@ void disconnect_recieved_ACK() {
         rdp_close_sockets();
         connected = 0;
         rdp_log("Disconnected.");
+    } else {
+        rdp_send(rdp_FIN | rdp_RES, seq_number, 0, "");
     }
-    rdp_send(rdp_FIN | rdp_RES, seq_number, 0, "");
 }
 
 /**
