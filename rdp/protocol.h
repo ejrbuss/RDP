@@ -9,7 +9,7 @@
 // are equivalent regardless of size.
 typedef unsigned char  unint8_t;
 typedef unsigned short unint16_t;
-typedef unsigned int   unint23_t;
+typedef unsigned int   unint32_t;
 
 // Defines the full size of the header
 #define rdp_HEADER_SIZE 15
