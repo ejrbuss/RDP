@@ -51,7 +51,6 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
  *
  */
 void re_ack() {
-    rdp_log("WINDOW SIZE: %d\n", window_size);
     if(ack_number == last_ack) {
         rdp_send(rdp_ACK | rdp_RES, ack_number, window_size, "");
     } else {
@@ -164,6 +163,7 @@ void recieved_timeout() {
  */
 void rdp_reciever_recieve() {
     while(!disconnect) {
+        rdp_log("WINDOW SIZE: %d\n", window_size);
         switch(rdp_listen(timeout)) {
             case event_SYN: recieved_SYN(); break;
             case event_FIN: recieved_FIN(); break;
