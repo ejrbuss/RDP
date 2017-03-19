@@ -3,8 +3,8 @@
 #include "filestream.h"
 #include "util.h"
 
-FILE* file_read  = NULL;
-FILE* file_write = NULL;
+static FILE* file_read  = NULL;
+static FILE* file_write = NULL;
 static int file_size;
 
 /**

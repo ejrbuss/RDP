@@ -6,12 +6,12 @@
 #include "util.h"
 
 // Local variables for maintaining parse states
-unint16_t flags;
-unint16_t seq_ack_number;
-unint16_t payload_size;
-unint16_t window_size;
-unint16_t size;
-char payload[rdp_MAX_PACKET_SIZE];
+static unint16_t flags;
+static unint16_t seq_ack_number;
+static unint16_t payload_size;
+static unint16_t window_size;
+static unint16_t size;
+static char payload[rdp_MAX_PACKET_SIZE];
 
 // Packet names based off flags
 const char* rdp_flag_names[] = {

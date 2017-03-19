@@ -6,20 +6,20 @@
 #include "netconfig.h"
 #include "util.h"
 
-char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
-unint16_t payload_buffer_seq[WINDOW_SIZE];
+static char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
+static unint16_t payload_buffer_seq[WINDOW_SIZE];
 
-int recieved_packets;
-int reset_count;
-int timeout_count;
-int timeout;
-int connected;
-int disconnect;
-int disconnecting;
+static int recieved_packets;
+static int reset_count;
+static int timeout_count;
+static int timeout;
+static int connected;
+static int disconnect;
+static int disconnecting;
 
-unint16_t current_window_size;
-unint16_t ack_number;
-unint16_t last_ack;
+static unint16_t current_window_size;
+static unint16_t ack_number;
+static unint16_t last_ack;
 
 /**
  * @param const char* reciever_ip

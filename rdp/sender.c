@@ -7,16 +7,16 @@
 
 #define PAYLOAD_SIZE (rdp_MAX_PACKET_SIZE - rdp_HEADER_SIZE)
 
-int finished;
-int connected;
-int reset_count;
-int timeout_count;
-int timeout;
-int start;
-int file_size;
+static int finished;
+static int connected;
+static int reset_count;
+static int timeout_count;
+static int timeout;
+static int start;
+static int file_size;
 
-int file_pointer;
-unint16_t seq_number;
+static int file_pointer;
+static unint16_t seq_number;
 
 /**
  *

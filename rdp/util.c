@@ -5,7 +5,7 @@
 #include <time.h>
 #include "util.h"
 
-int DEBUG = 0;
+static int DEBUG = 0;
 
 /**
  * Enable debug mode.

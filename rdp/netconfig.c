@@ -12,26 +12,26 @@
 #include "util.h"
 
 /* Stat tracking */
-int stats[stat_length];
+static int stats[stat_length];
 
 /* Buffers */
-char recieve_buffer[SOCK_BUFFER_SIZE];
-char send_buffer[SOCK_BUFFER_SIZE];
-char source_ip[ADDR_SIZE];
-char destination_ip[ADDR_SIZE];
-char source_port[ADDR_SIZE];
-char destination_port[ADDR_SIZE];
+static char recieve_buffer[SOCK_BUFFER_SIZE];
+static char send_buffer[SOCK_BUFFER_SIZE];
+static char source_ip[ADDR_SIZE];
+static char destination_ip[ADDR_SIZE];
+static char source_port[ADDR_SIZE];
+static char destination_port[ADDR_SIZE];
 
 /* Sockets and addresses */
-int source_socket;
-int destination_socket;
-struct sockaddr_in source_address;
-struct sockaddr_in destination_address;
+static int source_socket;
+static int destination_socket;
+static struct sockaddr_in source_address;
+static struct sockaddr_in destination_address;
 
 /* Flags */
-int source_bound      = 0;
-int destination_bound = 0;
-int timedout          = 0;
+static int source_bound      = 0;
+static int destination_bound = 0;
+static int timedout          = 0;
 
 /**
  * Binds the source socket for rdp_listen. Packets will become recievable after
