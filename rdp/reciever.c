@@ -154,7 +154,7 @@ void recieved_timeout() {
     }
     if(disconnecting) {
         rdp_close_sockets();
-        disconnet = 1;
+        disconnect = 1;
     }
 }
 
