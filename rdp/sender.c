@@ -168,10 +168,10 @@ void send_recieved_RST() {
  *
  */
 void send_recieved_timeout() {
-    send_packets();
+    //send_packets();
     if(timeout_count++ > MAXIMUM_TIMEOUTS) {
         rdp_close_sockets();
-        rdp_exit(EXIT_FAILURE, "RDP transimmision fauked as the connection timed out too many times.");
+        rdp_exit(EXIT_FAILURE, "RDP transimmision failed as the connection timed out too many times.");
     }
 }
 
