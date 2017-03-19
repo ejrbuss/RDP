@@ -70,7 +70,7 @@ void recieved_SYN() {
 /**
  *
  */
-void recieve_FIN() {
+void recieved_FIN() {
     disconnecting = 1;
     ack_number    = rdp_seq_ack_number() + 1;
     re_ack();
