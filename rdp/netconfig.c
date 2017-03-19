@@ -258,6 +258,8 @@ void rdp_send(
 ) {
     int packed_size = rdp_packed_size(flags & rdp_DAT ? size : 0);
 
+    rdp_log("Sending flags: %d\n", flags & 0xFFFFF);
+
     // Compute statistics
     stats[stat_sent_SYN]          += !!(flags & rdp_SYN);
     stats[stat_sent_FIN]          += !!(flags & rdp_FIN);
