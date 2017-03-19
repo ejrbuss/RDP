@@ -17,7 +17,7 @@ int connected;
 int disconnect;
 int disconnecting;
 
-unint16_t window_size;
+unint16_t current_window_size;
 unint16_t ack_number;
 unint16_t last_ack;
 
@@ -30,7 +30,7 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
     // Init source socket and socket address
     rdp_open_source_socket(reciever_ip, reciever_port);
 
-    window_size      = WINDOW_SIZE;
+    current_window_size      = WINDOW_SIZE;
     timeout          = TIMEOUT;
     recieved_packets = 0;
     reset_count      = 0;
@@ -52,10 +52,10 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
  */
 void re_ack() {
     if(ack_number == last_ack) {
-        rdp_send(rdp_ACK | rdp_RES, ack_number, window_size, "");
+        rdp_send(rdp_ACK | rdp_RES, ack_number, current_window_size, "");
     } else {
         last_ack = ack_number;
-        rdp_send(rdp_ACK, ack_number, window_size, "");
+        rdp_send(rdp_ACK, ack_number, current_window_size, "");
     }
 }
 
@@ -63,7 +63,7 @@ void re_ack() {
  *
  */
 void recieved_SYN() {
-    rdp_log("RECIEVED SYN: %d\n", window_size);
+    rdp_log("RECIEVED SYN: %d\n", current_window_size);
     connected  = 1;
     ack_number = rdp_seq_ack_number() + 1;
     re_ack();
@@ -89,7 +89,7 @@ void recieved_DAT() {
         ack_number += rdp_payload_size();
 
         // Dequeue data
-        if(window_size != WINDOW_SIZE) {
+        if(current_window_size != WINDOW_SIZE) {
             int dequeue = 0;
             do {
                 for(i = 0; i < WINDOW_SIZE; i++) {
@@ -99,12 +99,12 @@ void recieved_DAT() {
                         ack_number         += strlen(payload);
                         payload_buffer_seq[i] = -1;
                         dequeue             = 1;
-                        window_size++;
+                        current_window_size++;
                     }
                 }
             } while(dequeue);
         }
-    } else if(window_size == 0) {
+    } else if(current_window_size == 0) {
         re_ack();
     } else {
         // Queue data
@@ -117,7 +117,7 @@ void recieved_DAT() {
                 break;
             }
         }
-        if(--window_size == 0 || ++recieved_packets > WINDOW_SIZE) {
+        if(--current_window_size == 0 || ++recieved_packets > WINDOW_SIZE) {
             recieved_packets = 0;
             re_ack();
         }
