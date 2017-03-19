@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include "sender.h"
 #include "filestream.h"
 #include "netconfig.h"
@@ -281,6 +280,6 @@ void rdp_sender_stats() {
         stats[stat_sent_RST],
         stats[stat_recieved_ACK],
         stats[stat_recieved_RST],
-        (int) (stats[stat_end_time] - stats[stat_start_time]) / (int) (CLOCKS_PER_SEC)
+        (stats[stat_end_time] - stats[stat_start_time])
     );
 }

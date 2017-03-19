@@ -129,7 +129,7 @@ void rdp_open_destination_socket(const char* ip, const char* port) {
     destination_address.sin_port        = htons(atoi(destination_port));
 
     destination_bound = 1;
-    stats[stat_start_time] = clock();
+    stats[stat_start_time] = time(0);
 }
 
 /**
@@ -139,7 +139,7 @@ void rdp_close_sockets() {
     if(source_bound) {
         close(source_socket);
     }
-    stats[stat_end_time] = clock();
+    stats[stat_end_time] = time(0);
 }
 
 /**
