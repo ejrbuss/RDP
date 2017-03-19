@@ -43,7 +43,7 @@ static int timedout          = 0;
  */
 void rdp_open_source_socket(const char* ip, const char* port) {
 
-    stats[stat_start_time] = time(0);
+    stats[stat_start_time] = time(NULL);
 
     // Copy source IP and port
     strcpy(source_ip, ip);
@@ -140,7 +140,7 @@ void rdp_close_sockets() {
     if(source_bound) {
         close(source_socket);
     }
-    stats[stat_end_time] = time(0);
+    stats[stat_end_time] = time(NULL);
 }
 
 /**
