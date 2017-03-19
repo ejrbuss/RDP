@@ -63,13 +63,12 @@ int main(int argc, char** argv) {
         args[receiver_ip],
         args[receiver_port]
     );
-
     // Open filestream
     rdp_filestream_open(args[sender_file_name], "r");
     // Open connection
     rdp_sender_connect();
     // Send file
-    rdp_send();
+    rdp_sender_send();
     // Close connection
     rdp_sender_disconnect();
     // Close filestream

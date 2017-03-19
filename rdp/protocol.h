@@ -11,11 +11,14 @@ typedef unsigned char  unint8_t;
 typedef unsigned short unint16_t;
 
 // Bit masks for packet flags
-#define rdp_ACK ((unint8_t) 0b00000001)
-#define rdp_SYN ((unint8_t) 0b00000010)
-#define rdp_FIN ((unint8_t) 0b00000100)
-#define rdp_RST ((unint8_t) 0b00001000)
-#define rdp_DAT ((unint8_t) 0b00010000)
+#define rdp_ACK ((unint8_t) 0b00000001) // Acknowledgment flag
+#define rdp_SYN ((unint8_t) 0b00000010) // Synchrnoize flag
+#define rdp_FIN ((unint8_t) 0b00000100) // Finish flag
+#define rdp_RST ((unint8_t) 0b00001000) // Reset flag
+#define rdp_DAT ((unint8_t) 0b00010000) // Data flag
+#define rdp_RES ((unint8_t) 0b00100000) // Resend flag
+#define rdp_UN1 ((unint8_t) 0b01000000) // Undefined 1
+#define rdp_UN2 ((unint8_t) 0b10000000) // Undefiend 2
 
 // Always 0 pad just in case
 #define rdp_MAX_PACKET_SIZE 1023

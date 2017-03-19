@@ -1,6 +1,8 @@
 #ifndef RDP_UTIL_HEADER
 #define RDP_UTIL_HEADER
 
+#define loop while(1)
+
 extern void rdp_debug();
 extern void rdp_exit(const int status, const char *fmt, ...);
 extern void rdp_log(const char *fmt, ...);
