@@ -51,6 +51,7 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
  *
  */
 void re_ack() {
+    rdp_log("WINDOW SIZE: %d\n", window_size);
     if(ack_number == last_ack) {
         rdp_send(rdp_ACK | rdp_RES, ack_number, window_size, "");
     } else {
