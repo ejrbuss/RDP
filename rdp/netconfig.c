@@ -43,9 +43,6 @@ static int timedout          = 0;
  */
 void rdp_open_source_socket(const char* ip, const char* port) {
 
-    stats[stat_start_time] = time(NULL);
-    rdp_log("STAT START TIME: %d\n", stats[stat_start_time]);
-
     // Copy source IP and port
     strcpy(source_ip, ip);
     strcpy(source_port, port);
@@ -86,7 +83,8 @@ void rdp_open_source_socket(const char* ip, const char* port) {
         (struct sockaddr*) &source_address,
         sizeof(source_address)
     )) {
-        rdp_close_sockets();        rdp_exit(EXIT_FAILURE, "Failed to bind socket: %s\n", strerror(errno));
+        rdp_close_sockets();
+        rdp_exit(EXIT_FAILURE, "Failed to bind socket: %s\n", strerror(errno));
     }
 
     // Prepare stats
@@ -94,6 +92,7 @@ void rdp_open_source_socket(const char* ip, const char* port) {
     for(i = 0; i < stat_length; i++) {
         stats[i] = 0;
     }
+    stats[stat_start_time] = time(NULL);
 
     source_bound = 1;
 }
