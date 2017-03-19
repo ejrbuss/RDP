@@ -5,7 +5,7 @@
 
 FILE* file_read  = NULL;
 FILE* file_write = NULL;
-int size         = 0;
+static int file_size;
 
 /**
  * Open a filestream for reading or writing. Two file streams can be open at a
@@ -44,7 +44,7 @@ int rdp_filestream_size() {
         rdp_exit(EXIT_FAILURE, "No file opened!");
     }
     fseek(file_read, 0, SEEK_END);
-    return (size = ftell(file_read));
+    return (file_size = ftell(file_read));
 }
 
 /**
@@ -60,8 +60,8 @@ int rdp_filestream_read(char* buffer, const int buffer_size, const int sequence_
     if(file_read == NULL) {
         rdp_exit(EXIT_FAILURE, "No file opened!");
     }
-    if(sequence_number > size) {
-        rdp_exit(EXIT_FAILURE, "Cannot read byte sequence larger than file size: %d > %d", sequence_number, size);
+    if(sequence_number > file_size) {
+        rdp_exit(EXIT_FAILURE, "Cannot read byte sequence larger than file size: %d > %d", sequence_number, file_size);
     }
     rdp_zero(buffer, buffer_size);
     fseek(file_read, sequence_number, SEEK_SET);
