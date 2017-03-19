@@ -94,6 +94,11 @@ void recieved_DAT() {
 
         // Dequeue data
         if(current_window_size != WINDOW_SIZE) {
+            printf("[");
+            for(i = 0; i < WINDOW_SIZE; i++) {
+                printf("%d,", payload_buffer_seq[i]);
+            }
+            printf("]\n");
             int dequeue = 0;
             do {
                 for(i = 0; i < WINDOW_SIZE; i++) {
