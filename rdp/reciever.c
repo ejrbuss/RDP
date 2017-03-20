@@ -132,7 +132,7 @@ void recieved_DAT() {
         rdp_log("seq number [x]");
         ack_number;
         rdp_log("ack number [x]");
-        not_int_queue(rdp_seq_ack_number());
+        not_in_queue(rdp_seq_ack_number());
         rdp_log("not int queue [x]");
 
         if(rdp_seq_ack_number() > ack_number && not_in_queue(rdp_seq_ack_number())) {
