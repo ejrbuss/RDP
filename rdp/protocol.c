@@ -54,19 +54,25 @@ char* rdp_pack(
     const char* payload
 ) {
     // Get total packet size
+    rdp_log("1");
     unint16_t checksum = rdp_checksum(flags, seq_ack_number, size, payload);
     char*      _magic_ = "CSC361";
+    rdp_log("2");
     // Zero the buffer
+    rdp_log("3");
     rdp_zero(buffer, size + 1);
     // Serialize
+    rdp_log("4");
     memcpy(buffer + 0,  _magic_,         6);
     memcpy(buffer + 6,  &flags,          1);
     memcpy(buffer + 7,  &seq_ack_number, 4);
     memcpy(buffer + 11, &size,           2);
     memcpy(buffer + 13, &checksum,       2);
+    rdp_log("7");
     if(flags & rdp_DAT) {
         memcpy(buffer + rdp_HEADER_SIZE, payload, size);
     }
+    rdp_log("6");
     // Return packed buffer
     return buffer;
 }
@@ -79,36 +85,31 @@ char* rdp_pack(
  * @returns int          a flag indicating if the header was valid
  */
 int rdp_parse(char* buffer) {
-    rdp_log("1");
+
     unint16_t checksum = 0;
     char _magic_[7];
     rdp_zero(payload, rdp_MAX_PACKET_SIZE);
     rdp_zero(_magic_, 7);
-    rdp_log("2");
 
     flags          = 0;
     seq_ack_number = 0;
     payload_size   = 0;
     window_size    = 0;
-    rdp_log("3");
 
     // Deserialize
     memcpy(_magic_,         buffer + 0,  6);
     memcpy(&flags,          buffer + 6,  1);
     memcpy(&seq_ack_number, buffer + 7,  4);
-    memcpy(&size,           buffer + 11, 2);
+    memcpy(&size,           buffer + 11,  2);
     memcpy(&checksum,       buffer + 13, 2);
-    rdp_log("4");
     if(flags & rdp_DAT) {
         memcpy(&payload_size, buffer + 11, 2);
         memcpy(&payload, buffer + rdp_HEADER_SIZE, size);
     } else {
         memcpy(&window_size, buffer + 11, 2);
     }
-    rdp_log("5");
     size = rdp_packed_size(payload_size);
 
-    rdp_log("6");
     // Valdiate header
     return
         rdp_streq(_magic_, "CSC361") &&
