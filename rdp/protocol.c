@@ -54,13 +54,11 @@ char* rdp_pack(
     const char* payload
 ) {
     // Get total packet size
-    rdp_exit(1, "size: %d", size);
-
     unint16_t checksum = rdp_checksum(flags, seq_ack_number, size, payload);
     char*      _magic_ = "CSC361";
 
     // Zero the buffer
-    rdp_zero(buffer, rdp_HEADER_SIZE + !!(flags & rdp_DAT) * size);
+    rdp_zero(buffer, rdp_MAX_PACKET_SIZE + 1);
     // Serialize
     memcpy(buffer + 0,  _magic_,         6);
     memcpy(buffer + 6,  &flags,          1);
