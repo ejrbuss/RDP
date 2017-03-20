@@ -62,9 +62,15 @@ int not_in_queue(unint32_t seq) {
  */
 void re_ack() {
     if(ack_number == last_ack) {
+        if(!(flags & rdp_DAT) && size > 10) {
+            rdp_exit(1, "Why do we fall bruce %d", size);
+        }
         rdp_send(rdp_ACK | rdp_RES, ack_number, current_window_size, "");
     } else {
         last_ack = ack_number;
+        if(!(flags & rdp_DAT) && size > 10) {
+            rdp_exit(1, "Why do we fall bruce %d", size);
+        }
         rdp_send(rdp_ACK, ack_number, current_window_size, "");
     }
 }
