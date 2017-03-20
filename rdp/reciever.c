@@ -65,9 +65,9 @@ void re_ack() {
         rdp_send(rdp_ACK | rdp_RES, ack_number, current_window_size, "");
     } else {
         last_ack = ack_number;
-        rdp_log("1");
+        rdp_log("--start--");
         rdp_send(rdp_ACK, ack_number, current_window_size, "");
-        rdp_log("2");
+        rdp_log("--end--");
     }
 }
 
