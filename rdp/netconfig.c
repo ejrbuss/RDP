@@ -259,9 +259,7 @@ void rdp_send(
     const unint16_t size,
     const char* payload
 ) {
-    rdp_log("1");
     int packed_size = rdp_packed_size(flags & rdp_DAT ? size : 0);
-    rdp_log("2");
 
     // Compute statistics
     stats[stat_sent_SYN]          += !!(flags & rdp_SYN);
@@ -272,7 +270,15 @@ void rdp_send(
     stats[stat_sent_bytes_unique] += !(flags & rdp_RES) * packed_size;
     stats[stat_sent_bytes]        += packed_size;
 
+    rdp_log("1");
+    source_socket;
+    rdp_log("2");
+    rdp_pack(send_buffer, flags, seq_ack_number, size, payload);
     rdp_log("3");
+    (struct sockaddr*) &destination_address,
+    rdp_log("4");
+    sizeof(destination_address)
+    rdp_log("5");
 
     if(sendto(
         source_socket,
@@ -282,11 +288,9 @@ void rdp_send(
         (struct sockaddr*) &destination_address,
         sizeof(destination_address)
     ) < 0) {
-        rdp_log("4");
         rdp_close_sockets();
         rdp_exit(EXIT_FAILURE, "Error sending packet: %s\n", strerror(errno));
     } else {
-        rdp_log("5");
         rdp_log_packet(
             flags & rdp_RES ? "S" : "s",
             source_ip,
@@ -297,7 +301,6 @@ void rdp_send(
             seq_ack_number,
             size
         );
-        rdp_log("6");
     }
 }
 
