@@ -166,7 +166,7 @@ void recieved_RST() {
  */
 void recieved_timeout() {
     if(disconnecting)  {
-        if(timeout_count++ > MAXIMUM_TIMEOUTS)) {
+        if(timeout_count++ > MAXIMUM_TIMEOUTS) {
             rdp_close_sockets();
             disconnect = 1;
         }
