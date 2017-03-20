@@ -147,8 +147,12 @@ void recieved_DAT() {
                 }
             }
         }
+        if(--current_window_size == 0) {
+            recieved_packets = 0;
+            re_ack();
+        }
     }
-    if(--current_window_size == 0 || ++recieved_packets >= WINDOW_SIZE) {
+    if(++recieved_packets >= WINDOW_SIZE) {
         recieved_packets = 0;
         re_ack();
     }
