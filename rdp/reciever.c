@@ -142,15 +142,15 @@ void recieved_DAT() {
             }
         }
     }
-    if(++recieved_packets >= WINDOW_SIZE) {
-        recieved_packets = 0;
-        re_ack();
-    }
     current_window_size = 0;
     for(i = 0; i < WINDOW_SIZE; i++) {
         if(payload_buffer_seq[i] != 0) {
             current_window_size++;
         }
+    }
+    if(++recieved_packets >= WINDOW_SIZE) {
+        recieved_packets = 0;
+        re_ack();
     }
     if(current_window_size == 0) {
         recieved_packets = 0;
