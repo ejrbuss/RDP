@@ -128,12 +128,13 @@ void recieved_DAT() {
     } else {
         // Queue data
 
+        rdp_log("checking segs...");
         rdp_seq_ack_number();
         rdp_log("seq number [x]");
         ack_number;
         rdp_log("ack number [x]");
         not_in_queue(rdp_seq_ack_number());
-        rdp_log("not int queue [x]");
+        rdp_log("not nt queue [x]");
 
         if(rdp_seq_ack_number() > ack_number && not_in_queue(rdp_seq_ack_number())) {
             rdp_exit(EXIT_SUCCESS, "We actually are using the buffer :)");
