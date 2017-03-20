@@ -148,11 +148,14 @@ void recieved_DAT() {
                 }
             }
         }
+        rdp_log("we didn't do the thing");
     }
+    rdp_log("still haven't faulted'");
     if(--current_window_size == 0 || ++recieved_packets >= WINDOW_SIZE) {
         recieved_packets = 0;
         re_ack();
     }
+    rdp_log("all the way to the end");
 }
 
 /**
