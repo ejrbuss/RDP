@@ -111,8 +111,9 @@ void recieved_DAT() {
         ack_number += rdp_payload_size();
         recieved_packets++;
 
-        int dequeue = 0;
+        int dequeue;
         do {
+            dequeue = 0;
             for(i = 0; i < WINDOW_SIZE; i++) {
                 if(payload_buffer_seq[i] < ack_number) {
                     payload_buffer_seq[i] = 0;
@@ -127,11 +128,9 @@ void recieved_DAT() {
             }
         } while(dequeue);
     } else if(current_window_size == 0) {
-        rdp_log("2");
         recieved_packets = 0;
         re_ack();
     } else {
-        rdp_log("3");
         // Queue data
         if(rdp_seq_ack_number() > ack_number && not_in_queue(rdp_seq_ack_number())) {
             for(i = 0; i < WINDOW_SIZE; i++) {
