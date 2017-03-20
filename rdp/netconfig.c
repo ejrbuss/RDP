@@ -275,9 +275,9 @@ void rdp_send(
     rdp_log("2");
     rdp_pack(send_buffer, flags, seq_ack_number, size, payload);
     rdp_log("3");
-    (struct sockaddr*) &destination_address,
+    (struct sockaddr*) &destination_address;
     rdp_log("4");
-    sizeof(destination_address)
+    sizeof(destination_address);
     rdp_log("5");
 
     if(sendto(
