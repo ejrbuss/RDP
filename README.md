@@ -125,3 +125,9 @@ state:
     TIMEOUT
         -> send ACK || send -> RST
 ```
+
+```
+tc qdisc show
+tc qdisc add dev br0 root netem drop 10%
+tc qdisc del dev br0 root netem drop 10%
+```

@@ -38,8 +38,8 @@ void rdp_sender(
     file_size     = rdp_filestream_size();
 
     timeout       = TIMEOUT * 2;
-    offset        = rdp_get_seq_number();
-    seq_number    = offset;
+    seq_number    = rdp_get_seq_number();
+    offset        = seq_number + 1;
 }
 
 /**
@@ -116,12 +116,13 @@ void send_packets() {
     rdp_log("Sending %d packets...\n", window_size);
 
     // Send DAT packets
-    for(i = 0; i < window_size && (seq_number - offset) < file_size; i++) {
+    for(i = 0; i < window_size && (seq_number - offset < file_size; i++) {
         char payload[PAYLOAD_SIZE + 1];
-        int len  = rdp_filestream_read(payload, PAYLOAD_SIZE, seq_number - offset);
+        int idx  = seq_number - offset;
+        int len  = rdp_filestream_read(payload, PAYLOAD_SIZE, idx);
         int size = PAYLOAD_SIZE > len ? len : PAYLOAD_SIZE;
         rdp_send(rdp_DAT, seq_number, size, payload);
-        seq_number   += size;
+        seq_number += size;
     }
 }
 

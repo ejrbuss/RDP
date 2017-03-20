@@ -182,7 +182,6 @@ int rdp_listen(const int timeout_milli) {
         case 0:
             timedout = 1;
             return event_timeout;
-        default: break;
     }
 
     // Recieve and parse the packet

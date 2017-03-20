@@ -46,6 +46,16 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
         payload_buffer_seq[i] = -1;
     }
 }
+/**
+ *
+ */
+int not_in_queue(unint32_t seq) {
+    int i;
+    for(i = 0; i < WINDOW_SIZE; i++) {
+        if(payload_buffer_seq[i] == seq) return 0;
+    }
+    return 1;
+}
 
 /**
  *
@@ -115,7 +125,7 @@ void recieved_DAT() {
         re_ack();
     } else {
         // Queue data
-        if(rdp_seq_ack_number() > ack_number) {
+        if(rdp_seq_ack_number() > ack_number && not_in_queue(rdp_seq_ack_number())) {
             for(i = 0; i < WINDOW_SIZE; i++) {
                 if(payload_buffer_seq[i] == -1) {
                     char* payload = rdp_payload();
@@ -217,9 +227,3 @@ void rdp_reciever_stats() {
     );
 }
 /*
-
-tc qdisc show
-tc qdisc add dev br0 root netem drop 10%
-tc qdisc del dev br0 root netem drop 10%
-
-*/
