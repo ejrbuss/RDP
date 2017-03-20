@@ -67,6 +67,7 @@ void re_ack() {
         last_ack = ack_number;
         rdp_log("1");
         rdp_send(rdp_ACK, ack_number, current_window_size, "");
+        rdp_log("2");
     }
 }
 
