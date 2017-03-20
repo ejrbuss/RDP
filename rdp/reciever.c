@@ -177,7 +177,9 @@ void recieved_timeout() {
             rdp_close_sockets();
             rdp_exit(EXIT_FAILURE, "RDP transimmision failed as the connection timed out too many times.");
         }
+        rdp_log("about to re_ack");
         re_ack();
+        rdp_log("re acked");
     }
 }
 
