@@ -61,12 +61,19 @@ int not_in_queue(unint32_t seq) {
  *
  */
 void re_ack() {
+    rdp_log("1");
     if(ack_number == last_ack) {
+        rdp_log("2");
         rdp_send(rdp_ACK | rdp_RES, ack_number, current_window_size, "");
+        rdp_log("3");
     } else {
+        rdp_log("4");
         last_ack = ack_number;
+        rdp_log("5");
         rdp_send(rdp_ACK, ack_number, current_window_size, "");
+        rdp_log("6");
     }
+    rdp_log("7");
 }
 
 /**
@@ -177,9 +184,7 @@ void recieved_timeout() {
             rdp_close_sockets();
             rdp_exit(EXIT_FAILURE, "RDP transimmision failed as the connection timed out too many times.");
         }
-        rdp_log("about to re_ack");
         re_ack();
-        rdp_log("re acked");
     }
 }
 
