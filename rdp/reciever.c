@@ -173,6 +173,11 @@ void recieved_RST() {
  *
  */
 void recieved_timeout() {
+    printf("[");
+    for(i = 0; i < WINDOW_SIZE; i++) {
+        printf("%d,", payload_buffer_seq[i]);
+    }
+    printf("]\n");
     if(disconnecting) {
         rdp_close_sockets();
         disconnect = 1;
