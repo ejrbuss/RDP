@@ -144,9 +144,7 @@ void recieved_DAT() {
     }
     current_window_size = 0;
     for(i = 0; i < WINDOW_SIZE; i++) {
-        if(payload_buffer_seq[i] != 0) {
-            current_window_size++;
-        }
+        current_window_size += (payload_buffer_seq[i] == 0);
     }
     if(++recieved_packets >= WINDOW_SIZE) {
         recieved_packets = 0;
