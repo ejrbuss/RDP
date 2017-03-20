@@ -174,13 +174,7 @@ void recieved_RST() {
  *
  */
 void recieved_timeout() {
-    int i;
-    printf("[");
-    for(i = 0; i < WINDOW_SIZE; i++) {
-        printf("%d,", payload_buffer_seq[i]);
-    }
-    printf("]\n");
-    if(disconnecting) {
+    if(disconnecting && timeout_count++ > MAXIMUM_TIMEOUTS) {
         rdp_close_sockets();
         disconnect = 1;
     } else if(connected) {
