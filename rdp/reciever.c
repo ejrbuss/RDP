@@ -226,4 +226,3 @@ void rdp_reciever_stats() {
         (stats[stat_end_time] - stats[stat_start_time])
     );
 }
-/*
