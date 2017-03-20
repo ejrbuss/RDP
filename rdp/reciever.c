@@ -113,7 +113,9 @@ void recieved_DAT() {
         int dequeue = 0;
         do {
             for(i = 0; i < WINDOW_SIZE; i++) {
-                if(payload_buffer_seq[i] == ack_number) {
+                if(payload_buffer_seq[i] < ack_number) {
+                    payload_buffer_seq[i] = 0;
+                } else if(payload_buffer_seq[i] == ack_number) {
                     char* payload = payload_buffer + (i * rdp_MAX_PACKET_SIZE);
                     rdp_filestream_write(payload, strlen(payload));
                     ack_number           += strlen(payload);
