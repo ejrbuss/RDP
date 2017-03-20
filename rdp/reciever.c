@@ -121,12 +121,12 @@ void recieved_DAT() {
                     ack_number           += strlen(payload);
                     payload_buffer_seq[i] = 0;
                     dequeue               = 1;
-                    current_window_size++;
                     recieved_packets++;
                 }
             }
         } while(dequeue);
     } else if(current_window_size == 0) {
+        recieved_packets = 0;
         re_ack();
     } else {
         // Queue data
@@ -141,12 +141,18 @@ void recieved_DAT() {
                 }
             }
         }
-        if(--current_window_size == 0) {
-            recieved_packets = 0;
-            re_ack();
-        }
     }
     if(++recieved_packets >= WINDOW_SIZE) {
+        recieved_packets = 0;
+        re_ack();
+    }
+    current_window_size = 0;
+    for(i = 0; i < WINDOW_SIZE; i++) {
+        if(payload_buffer_seq[i] != 0) {
+            current_window_size++;
+        }
+    }
+    if(current_window_size == 0) {
         recieved_packets = 0;
         re_ack();
     }
