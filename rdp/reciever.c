@@ -97,18 +97,19 @@ void recieved_DAT() {
 
     timeout_count  = 0;
 
+    // Dequeue data
+    printf("[");
+    for(i = 0; i < WINDOW_SIZE; i++) {
+        printf("%d,", payload_buffer_seq[i]);
+    }
+    printf("]\n");
+
     // In order check
     if(rdp_seq_ack_number() == ack_number) {
         rdp_filestream_write(rdp_payload(), rdp_payload_size());
         ack_number += rdp_payload_size();
         recieved_packets++;
 
-        // Dequeue data
-        printf("[");
-        for(i = 0; i < WINDOW_SIZE; i++) {
-            printf("%d,", payload_buffer_seq[i]);
-        }
-        printf("]\n");
         int dequeue = 0;
         do {
             for(i = 0; i < WINDOW_SIZE; i++) {
