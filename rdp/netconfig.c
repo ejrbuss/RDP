@@ -270,19 +270,6 @@ void rdp_send(
     stats[stat_sent_bytes_unique] += !(flags & rdp_RES) * packed_size;
     stats[stat_sent_bytes]        += packed_size;
 
-    // rdp_pack(send_buffer, flags, seq_ack_number, size, payload);
-    rdp_log("1");
-    send_buffer;
-    rdp_log("2");
-    flags;
-    rdp_log("3");
-    seq_ack_number;
-    rdp_log("4");
-    size;
-    rdp_log("5");
-    payload;
-    rdp_log("6");
-
     if(sendto(
         source_socket,
         rdp_pack(send_buffer, flags, seq_ack_number, size, payload),
