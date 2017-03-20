@@ -94,16 +94,8 @@ void recieved_FIN() {
 void recieved_DAT() {
 
     int i;
-
     timeout_count  = 0;
 
-    // Dequeue data
-    printf("[");
-    for(i = 0; i < WINDOW_SIZE; i++) {
-        printf("%d,", payload_buffer_seq[i]);
-    }
-    printf("]\n");
-    rdp_log("--start--");
     // In order check
     if(rdp_seq_ack_number() == ack_number) {
         rdp_log("1");
@@ -144,7 +136,6 @@ void recieved_DAT() {
             }
         }
     }
-    rdp_log("--end--");
     current_window_size = 0;
     for(i = 0; i < WINDOW_SIZE; i++) {
         current_window_size += (payload_buffer_seq[i] == 0);
