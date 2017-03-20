@@ -281,7 +281,7 @@ void rdp_send(
         rdp_close_sockets();
         rdp_exit(EXIT_FAILURE, "Error sending packet: %s\n", strerror(errno));
     } else {
-        rdp_log(size);
+        rdp_log("%d", size);
         rdp_log_packet(
             flags & rdp_RES ? "S" : "s",
             source_ip,
