@@ -123,15 +123,12 @@ void recieved_DAT() {
                 }
             }
         } while(dequeue);
-    } else {
-        rdp_exit(EXIT_SUCCESS, "We actually dropped a packet :)");
-    }
-    /*
     } else if(current_window_size == 0) {
         re_ack();
     } else {
         // Queue data
         if(rdp_seq_ack_number() > ack_number && not_in_queue(rdp_seq_ack_number())) {
+            rdp_exit(EXIT_SUCCESS, "We actualyl are using the buffer :)");
             for(i = 0; i < WINDOW_SIZE; i++) {
                 if(payload_buffer_seq[i] == -1) {
                     char* payload = rdp_payload();
@@ -142,10 +139,7 @@ void recieved_DAT() {
                 }
             }
         }
-
-
     }
-    */
     if(--current_window_size == 0 || ++recieved_packets >= WINDOW_SIZE) {
         recieved_packets = 0;
         re_ack();
