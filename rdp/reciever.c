@@ -127,15 +127,7 @@ void recieved_DAT() {
         re_ack();
     } else {
         // Queue data
-
-        rdp_log("checking segs...");
-        rdp_seq_ack_number();
-        rdp_log("seq number [x]");
-        ack_number;
-        rdp_log("ack number [x]");
-        not_in_queue(rdp_seq_ack_number());
-        rdp_log("not nt queue [x]");
-
+        rdp_log("got %d looking for %d", rdp_seq_ack_number(), ack_number);
         if(rdp_seq_ack_number() > ack_number && not_in_queue(rdp_seq_ack_number())) {
             rdp_exit(EXIT_SUCCESS, "We actually are using the buffer :)");
             for(i = 0; i < WINDOW_SIZE; i++) {
@@ -148,14 +140,11 @@ void recieved_DAT() {
                 }
             }
         }
-        rdp_log("we didn't do the thing");
     }
-    rdp_log("still haven't faulted'");
     if(--current_window_size == 0 || ++recieved_packets >= WINDOW_SIZE) {
         recieved_packets = 0;
         re_ack();
     }
-    rdp_log("all the way to the end");
 }
 
 /**
