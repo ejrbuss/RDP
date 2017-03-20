@@ -116,7 +116,7 @@ void send_packets() {
     rdp_log("Sending %d packets...\n", window_size);
 
     // Send DAT packets
-    for(i = 0; i < window_size && (seq_number - offset < file_size; i++) {
+    for(i = 0; i < window_size && seq_number - offset < file_size; i++) {
         char payload[PAYLOAD_SIZE + 1];
         int idx  = seq_number - offset;
         int len  = rdp_filestream_read(payload, PAYLOAD_SIZE, idx);
