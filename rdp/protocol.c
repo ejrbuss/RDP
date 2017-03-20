@@ -54,7 +54,7 @@ char* rdp_pack(
     const char* payload
 ) {
     // Get total packet size
-    rdp_exit(EXIT_FAILURE, "size: %d", size);
+    rdp_exit(1, "size: %d", size);
 
     unint16_t checksum = rdp_checksum(flags, seq_ack_number, size, payload);
     char*      _magic_ = "CSC361";
