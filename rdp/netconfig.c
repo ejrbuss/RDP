@@ -172,7 +172,9 @@ int rdp_listen(const int timeout_milli) {
     timeout.tv_usec = timeout_milli * 1000;
 
     // Wait on select
+    rdp_log("on select");
     select_result = select(source_socket + 1, &read_fds, NULL, NULL, &timeout);
+    rdp_log("off select");
 
     // Check result
     switch(select_result) {
