@@ -101,6 +101,7 @@ void recieved_DAT() {
     if(rdp_seq_ack_number() == ack_number) {
         rdp_filestream_write(rdp_payload(), rdp_payload_size());
         ack_number += rdp_payload_size();
+        recieved_packets++;
 
         // Dequeue data
         printf("[");
@@ -118,6 +119,7 @@ void recieved_DAT() {
                     payload_buffer_seq[i] = -1;
                     dequeue               = 1;
                     current_window_size++;
+                    recieved_packets++;
                 }
             }
         } while(dequeue);
@@ -141,12 +143,13 @@ void recieved_DAT() {
             }
         }
 
-        if(--current_window_size == 0 || ++recieved_packets >= WINDOW_SIZE) {
-            recieved_packets = 0;
-            re_ack();
-        }
+
     }
     */
+    if(--current_window_size == 0 || ++recieved_packets >= WINDOW_SIZE) {
+        recieved_packets = 0;
+        re_ack();
+    }
 }
 
 /**
