@@ -282,9 +282,11 @@ void rdp_send(
         (struct sockaddr*) &destination_address,
         sizeof(destination_address)
     ) < 0) {
+        rdp_log("4");
         rdp_close_sockets();
         rdp_exit(EXIT_FAILURE, "Error sending packet: %s\n", strerror(errno));
     } else {
+        rdp_log("5");
         rdp_log_packet(
             flags & rdp_RES ? "S" : "s",
             source_ip,
@@ -295,8 +297,8 @@ void rdp_send(
             seq_ack_number,
             size
         );
+        rdp_log("6");
     }
-    rdp_log("4");
 }
 
 /**
