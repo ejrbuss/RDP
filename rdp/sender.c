@@ -131,7 +131,7 @@ void send_packets() {
  */
 void send_recieved_ACK() {
     timeout_count  = 0;
-    seq_number = rdp_seq_ack_number();
+    seq_number     = rdp_seq_ack_number();
     if(seq_number - offset >= file_size) {
         finished = 1;
     } else {
