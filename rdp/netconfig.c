@@ -272,6 +272,10 @@ void rdp_send(
     stats[stat_sent_bytes_unique] += !(flags & rdp_RES) * packed_size;
     stats[stat_sent_bytes]        += packed_size;
 
+    if(!(flags & rdp_DAT) && size > 10) {
+        rdp_exit(1, "Why do we fall bruce %d", size);
+    }
+
     if(sendto(
         source_socket,
         rdp_pack(send_buffer, flags, seq_ack_number, size, payload),

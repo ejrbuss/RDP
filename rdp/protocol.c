@@ -53,10 +53,6 @@ char* rdp_pack(
     const unint16_t size,
     const char* payload
 ) {
-
-    if(!(flags & rdp_DAT) && size > 10) {
-        rdp_exit(1, "Why do we fall bruce %d", size);
-    }
     // Get total packet size
     unint16_t checksum = rdp_checksum(flags, seq_ack_number, size, payload);
     char*      _magic_ = "CSC361";
