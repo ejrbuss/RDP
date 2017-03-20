@@ -128,9 +128,7 @@ void recieved_DAT() {
         re_ack();
     } else {
         // Queue data
-        rdp_log("got %d looking for %d", rdp_seq_ack_number(), ack_number);
         if(rdp_seq_ack_number() > ack_number && not_in_queue(rdp_seq_ack_number())) {
-            rdp_exit(EXIT_SUCCESS, "We actually are using the buffer :)");
             for(i = 0; i < WINDOW_SIZE; i++) {
                 if(payload_buffer_seq[i] == 0) {
                     char* payload = rdp_payload();
