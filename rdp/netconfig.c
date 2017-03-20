@@ -174,8 +174,7 @@ int rdp_listen(const int timeout_milli) {
     // Wait on select
     rdp_log("on select");
     select_result = select(source_socket + 1, &read_fds, NULL, NULL, &timeout);
-recieved_packets = 0;
-        re_ack();
+    rdp_log("off select");
 
     // Check result
     switch(select_result) {
