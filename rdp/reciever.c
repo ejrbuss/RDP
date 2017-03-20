@@ -173,6 +173,7 @@ void recieved_RST() {
  *
  */
 void recieved_timeout() {
+    int i;
     printf("[");
     for(i = 0; i < WINDOW_SIZE; i++) {
         printf("%d,", payload_buffer_seq[i]);
