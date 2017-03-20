@@ -61,6 +61,9 @@ int not_in_queue(unint32_t seq) {
  *
  */
 void re_ack() {
+    if(current_window_size > 10) {
+        rdp_exit(EXIT_FAILURE, "WOOPS");
+    }
     if(ack_number == last_ack) {
         rdp_send(rdp_ACK | rdp_RES, ack_number, current_window_size, "");
     } else {
