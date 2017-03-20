@@ -43,7 +43,7 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
     // Mark all of the payload buffer as available
     int i;
     for(i = 0; i < WINDOW_SIZE; i++) {
-        payload_buffer_seq[i] = -1;
+        payload_buffer_seq[i] = 0;
     }
 }
 /**
@@ -116,7 +116,7 @@ void recieved_DAT() {
                     char* payload = payload_buffer + (i * rdp_MAX_PACKET_SIZE);
                     rdp_filestream_write(payload, strlen(payload));
                     ack_number           += strlen(payload);
-                    payload_buffer_seq[i] = -1;
+                    payload_buffer_seq[i] = 0;
                     dequeue               = 1;
                     current_window_size++;
                     recieved_packets++;
@@ -127,11 +127,18 @@ void recieved_DAT() {
         re_ack();
     } else {
         // Queue data
-        rdp_exit(EXIT_SUCCESS, "We made it to the else");
+
+        rdp_seq_ack_number();
+        rdp_log("seq number [x]");
+        ack_number;
+        rdp_log("ack number [x]");
+        not_int_queue(rdp_seq_ack_number());
+        rdp_log("not int queue [x]");
+
         if(rdp_seq_ack_number() > ack_number && not_in_queue(rdp_seq_ack_number())) {
             rdp_exit(EXIT_SUCCESS, "We actually are using the buffer :)");
             for(i = 0; i < WINDOW_SIZE; i++) {
-                if(payload_buffer_seq[i] == -1) {
+                if(payload_buffer_seq[i] == 0) {
                     char* payload = rdp_payload();
                     payload_buffer_seq[i] = rdp_seq_ack_number();
                     rdp_zero(payload_buffer + (i * rdp_MAX_PACKET_SIZE), rdp_MAX_PACKET_SIZE);
