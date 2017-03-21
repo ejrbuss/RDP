@@ -81,5 +81,23 @@ int main(int argc, char** argv) {
 }
 
 void rdps_test() {
-
+    // Open filestream
+    rdp_filestream_open("send/test.dat", "r");
+    // Configure network
+    rdp_sender(
+        "192.168.1.100",
+        "9002",
+        "10.10.1.100",
+        "9001"
+    );
+    // Open connection
+    rdp_sender_connect();
+    // Send file
+    rdp_sender_send();
+    // Close connection
+    rdp_sender_disconnect();
+    // Close filestream
+    rdp_filestream_close();
+    // Print stats
+    rdp_sender_stats();
 }

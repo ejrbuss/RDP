@@ -41,8 +41,7 @@ int main(int argc, char** argv) {
             rdp_debug(); continue;
         }
         if(rdp_opt_cmp("-t") || rdp_opt_cmp("--test")) {
-            //rdps_test();
-            exit(EXIT_SUCCESS);
+            rdpr_test(); exit(EXIT_SUCCESS);
         }
         rdp_log("found arg: %s", argv[i]);
         args[arg++] = argv[i];
@@ -56,10 +55,10 @@ int main(int argc, char** argv) {
         default: break;
     }
 
-    // Configure network
-    rdp_reciever(args[receiver_ip], args[receiver_port]);
     // Open filestream
     rdp_filestream_open(args[receiver_file_name], "w");
+    // Configure network
+    rdp_reciever(args[receiver_ip], args[receiver_port]);
     // Recieve file
     rdp_reciever_recieve();
     // Close filestream
@@ -68,4 +67,17 @@ int main(int argc, char** argv) {
     rdp_reciever_stats();
 
     return EXIT_SUCCESS;
+}
+
+void rdpr_test() {
+    // Open filestream
+    rdp_filestream_open("recieve/test.dat", "w");
+    // Configure network
+    rdp_reciever("10.10.1.100", "9001");
+    // Recieve file
+    rdp_reciever_recieve();
+    // Close filestream
+    rdp_filestream_close();
+    // Print stats
+    rdp_reciever_stats();
 }
