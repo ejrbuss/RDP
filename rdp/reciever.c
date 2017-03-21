@@ -140,6 +140,7 @@ void recieved_DAT() {
     for(i = 0; i < WINDOW_SIZE; i++) {
         current_window_size += (payload_buffer_seq[i] == 0);
     }
+    /*
     if(++recieved_packets >= WINDOW_SIZE) {
         recieved_packets = 0;
         re_ack();
@@ -148,6 +149,7 @@ void recieved_DAT() {
         recieved_packets = 0;
         re_ack();
     }
+    */
 }
 
 /**
