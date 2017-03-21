@@ -124,7 +124,7 @@ void send_packets() {
         int size = PAYLOAD_SIZE > len ? len : PAYLOAD_SIZE;
         rdp_send(
             seq_number < last_seq
-                ? rdp_DAT & rdp_RES
+                ? rdp_DAT | rdp_RES
                 : rdp_DAT,
             seq_number,
             size,
