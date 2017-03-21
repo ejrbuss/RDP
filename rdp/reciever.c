@@ -94,7 +94,8 @@ void recieved_FIN() {
 void recieved_DAT() {
 
     int i;
-    timeout_count  = 0;
+    timeout       = TIMEOUT;
+    timeout_count = 0;
 
     // In order check
     if(rdp_seq_ack_number() == ack_number) {
@@ -168,6 +169,7 @@ void recieved_timeout() {
             connected, disconnecting
         );
         recieved_packets = 0;
+        timeout *= 1.5;
         if(timeout_count++ > MAXIMUM_TIMEOUTS) {
             rdp_close_sockets();
             rdp_exit(EXIT_FAILURE, "RDP transimmision failed as the connection timed out too many times.");
