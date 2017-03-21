@@ -15,6 +15,7 @@ static int timeout;
 static int file_size;
 
 static unint32_t seq_number;
+static unint32_t last_seq;
 static unint16_t offset;
 
 /**
@@ -121,7 +122,14 @@ void send_packets() {
         int idx  = seq_number - offset;
         int len  = rdp_filestream_read(payload, PAYLOAD_SIZE, idx);
         int size = PAYLOAD_SIZE > len ? len : PAYLOAD_SIZE;
-        rdp_send(rdp_DAT, seq_number, size, payload);
+        rdp_send(
+            seq_number < last_seq
+                ? rdp_DAT & rdp_RES
+                : rdp_DAT,
+            seq_number,
+            size,
+            payload
+        );
         seq_number += size;
     }
 }
@@ -131,6 +139,7 @@ void send_packets() {
  */
 void send_recieved_ACK() {
     timeout_count  = 0;
+    last_seq       = seq_number;
     seq_number     = rdp_seq_ack_number();
     if(seq_number - offset >= file_size) {
         finished = 1;
