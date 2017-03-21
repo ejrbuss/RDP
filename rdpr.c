@@ -4,7 +4,7 @@
 #include <string.h>
 #include "rdp/rdp.h"
 
-void rdps_test();
+void rdpr_test();
 
 static const char* usage =
 "Reciever Demo usage:\n\n"
