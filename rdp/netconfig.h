@@ -6,7 +6,7 @@
 // Net Constants
 #define SOCK_BUFFER_SIZE 2048
 #define ADDR_SIZE        256
-#define TIMEOUT          32
+#define TIMEOUT          64
 #define MAXIMUM_TIMEOUTS 256
 #define MAXIMUM_RESETS   16
 #define WINDOW_SIZE      16
