@@ -9,7 +9,7 @@
 #define TIMEOUT          50
 #define MAXIMUM_TIMEOUTS 1000
 #define MAXIMUM_RESETS   10
-#define WINDOW_SIZE      25
+#define WINDOW_SIZE      10
 
 // Events
 #define event_SYN        0
