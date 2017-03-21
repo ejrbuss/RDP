@@ -230,6 +230,7 @@ int rdp_listen(const int timeout_milli) {
     stats[stat_recieved_DAT]          += !!(rdp_flags() & rdp_DAT);
     stats[stat_recieved_ACK]          += !!(rdp_flags() & rdp_ACK);
     stats[stat_recieved_RST]          += !!(rdp_flags() & rdp_RST);
+    stats[start_recieved_DAT_unique]  += !!(rdp_flags() & rdp_DAT) & !(rdp_flags() & rdp_RES);
     stats[stat_recieved_bytes_unique] += !(rdp_flags() & rdp_RES) * rdp_size();
     stats[stat_recieved_bytes]        += rdp_size();
 
@@ -267,6 +268,7 @@ void rdp_send(
     stats[stat_sent_DAT]          += !!(flags & rdp_DAT);
     stats[stat_sent_RST]          += !!(flags & rdp_RST);
     stats[stat_sent_ACK]          += !!(flags & rdp_ACK);
+    stats[start_sent_DAT_unique]  += !!(flags & rdp_DAT) & !(flags & rdp_RES);
     stats[stat_sent_bytes_unique] += !(flags & rdp_RES) * packed_size;
     stats[stat_sent_bytes]        += packed_size;
 
