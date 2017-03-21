@@ -6,10 +6,10 @@
 // Net Constants
 #define SOCK_BUFFER_SIZE 2000
 #define ADDR_SIZE        200
-#define TIMEOUT          5
+#define TIMEOUT          30
 #define MAXIMUM_TIMEOUTS 1000
 #define MAXIMUM_RESETS   10
-#define WINDOW_SIZE      100
+#define WINDOW_SIZE      50
 
 // Events
 #define event_SYN        0
