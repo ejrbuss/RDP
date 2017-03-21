@@ -169,8 +169,8 @@ void recieved_timeout() {
             connected, disconnecting
         );
         recieved_packets = 0;
-        timeout *= 1.1;
-        if(timeout_count += (timeout / TIMEOUT) > MAXIMUM_TIMEOUTS) {
+        timeout *= 1.2;
+        if((timeout_count += (timeout / TIMEOUT)) > MAXIMUM_TIMEOUTS) {
             rdp_close_sockets();
             rdp_exit(EXIT_FAILURE, "RDP transimmision failed as the connection timed out too many times.");
         }
