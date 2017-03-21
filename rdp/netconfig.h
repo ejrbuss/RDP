@@ -7,7 +7,7 @@
 #define SOCK_BUFFER_SIZE 2048
 #define ADDR_SIZE        256
 #define TIMEOUT          8
-#define MAXIMUM_TIMEOUTS 512
+#define MAXIMUM_TIMEOUTS 256
 #define MAXIMUM_RESETS   16
 #define WINDOW_SIZE      64
 
