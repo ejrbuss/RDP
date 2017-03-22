@@ -70,7 +70,7 @@ void rdp_log_hex(const char* src, const int length) {
                 char tmp[5];
                 rdp_zero(tmp, 5);
                 memcpy(tmp, src + i - 3, 4);
-                rdp_no_newlines(tmp);
+                rdp_no_newlines(tmp, 'N');
                 printf(" | %s\n", tmp);
             }
         }
