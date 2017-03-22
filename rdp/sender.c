@@ -27,11 +27,11 @@ static int timeout;
 // Inidcates the sending file size
 static int file_size;
 // Indicates the current sequence number
-static unint32_t seq_number;
+static uint32_t seq_number;
 // Inidcates the previously ACKed sequence number
-static unint32_t last_seq;
+static uint32_t last_seq;
 // Indicates the offset of the sequence number from the file position
-static unint16_t offset;
+static uint16_t offset;
 
 /**
  * Creates a new RDP sender. Prepares a source socket. After this function has

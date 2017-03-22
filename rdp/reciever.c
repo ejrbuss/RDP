@@ -15,7 +15,7 @@
 // Out of order packet buffer
 static char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
 // Out of order pafcket sequence numbers
-static unint32_t payload_buffer_seq[WINDOW_SIZE];
+static uint32_t payload_buffer_seq[WINDOW_SIZE];
 // Indicates the number of recieved packets
 static int recieved_packets;
 // Indicates the number of resets
@@ -31,11 +31,11 @@ static int disconnect;
 // Inidcates if the reciever has entered the disconnection process
 static int disconnecting;
 // Inidcates the current window size in # of packets
-static unint16_t current_window_size;
+static uint16_t current_window_size;
 // Indicates the current acknowldgement number
-static unint32_t ack_number;
+static uint32_t ack_number;
 // Inidcates the last ack sent
-static unint32_t last_ack;
+static uint32_t last_ack;
 
 /**
  * Creates a new RDP reciever. Prepares a source socket. After this function has
@@ -69,10 +69,10 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
  * Helper function to determine if a sequence number is in the current out of
  * order buffer.
  *
- * @param   unint32_t seq the sequence number
+ * @param   uint32_t seq the sequence number
  * @returns int           1 if the sequence number is not in the buffer
  */
-int not_in_queue(unint32_t seq) {
+int not_in_queue(uint32_t seq) {
     int i;
     for(i = 0; i < WINDOW_SIZE; i++) {
         if(payload_buffer_seq[i] == seq) return 0;
@@ -81,7 +81,7 @@ int not_in_queue(unint32_t seq) {
 }
 
 /**
- *
+ * Helper function for sending an ACK.
  */
 void re_ack() {
     if(ack_number == last_ack) {

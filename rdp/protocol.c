@@ -6,11 +6,11 @@
 #include "util.h"
 
 // Local variables for maintaining parse states
-static unint16_t flags;
-static unint32_t seq_ack_number;
-static unint16_t payload_size;
-static unint16_t window_size;
-static unint16_t size;
+static uint16_t flags;
+static uint32_t seq_ack_number;
+static uint16_t payload_size;
+static uint16_t window_size;
+static uint16_t size;
 static char payload[rdp_MAX_PACKET_SIZE];
 
 // Packet names based off flags
@@ -28,10 +28,10 @@ const char* rdp_flag_names[] = {
 /**
  * Calculates the total packet size for a given data payload.
  *
- * @param   const unint16_t payload_size the size of the paylaod in bytes (no padding)
- * @returns unint16_t                    the packed packet size in bytes
+ * @param   const uint16_t payload_size the size of the paylaod in bytes (no padding)
+ * @returns uint16_t                    the packed packet size in bytes
  */
-unint16_t rdp_packed_size(const unint16_t payload_size) {
+uint16_t rdp_packed_size(const uint16_t payload_size) {
     return payload_size + rdp_HEADER_SIZE;
 }
 
@@ -40,21 +40,21 @@ unint16_t rdp_packed_size(const unint16_t payload_size) {
  * RDP transmission.
  *
  * @param   char*           buffer         a buffer to pack
- * @param   const unint16_t flags          flag byte
- * @param   const unint32_t seq_ack_number sequence or acknowledgement number
- * @param   const unint16_t size           paylod or window size number
+ * @param   const uint16_t flags          flag byte
+ * @param   const uint32_t seq_ack_number sequence or acknowledgement number
+ * @param   const uint16_t size           paylod or window size number
  * @param   const char*     payload        a buffer containing the payload
  * @returns char*                          a pointer to the packed buffer
  */
 char* rdp_pack(
     char* buffer,
-    const unint8_t flags,
-    const unint32_t seq_ack_number,
-    const unint16_t size,
+    const uint8_t flags,
+    const uint32_t seq_ack_number,
+    const uint16_t size,
     const char* payload
 ) {
     // Get total packet size
-    unint16_t checksum = rdp_checksum(flags, seq_ack_number, size, payload);
+    uint16_t checksum = rdp_checksum(flags, seq_ack_number, size, payload);
     char*      _magic_ = "CSC361";
 
     // Zero the buffer
@@ -81,7 +81,7 @@ char* rdp_pack(
  */
 int rdp_parse(char* buffer) {
 
-    unint16_t checksum = 0;
+    uint16_t checksum = 0;
     char _magic_[7];
     rdp_zero(payload, rdp_MAX_PACKET_SIZE);
     rdp_zero(_magic_, 7);
@@ -114,16 +114,16 @@ int rdp_parse(char* buffer) {
 /**
  * Returns a checksum for a packet.
  *
- * @param   const unint8_t  flags          flag byte
- * @param   const unint16_t seq_ack_number sequence or acknowledgement number
- * @param   const unint16_t size           payload or window size number
+ * @param   const uint8_t  flags          flag byte
+ * @param   const uint16_t seq_ack_number sequence or acknowledgement number
+ * @param   const uint16_t size           payload or window size number
  * @param   const char*     payload        a buffer containing the payload
- * @returns unint16_t                      checksum of the buffer
+ * @returns uint16_t                      checksum of the buffer
  */
-unint16_t rdp_checksum(
-    const unint8_t flags,
-    const unint32_t seq_ack_number,
-    const unint16_t size,
+uint16_t rdp_checksum(
+    const uint8_t flags,
+    const uint32_t seq_ack_number,
+    const uint16_t size,
     const char* payload
 ) {
 
@@ -139,8 +139,8 @@ unint16_t rdp_checksum(
         memcpy(buffer + rdp_HEADER_SIZE - 2, payload, size);
     };
 
-    unint16_t sum  = 0;
-    unint16_t word = 0;
+    uint16_t sum  = 0;
+    uint16_t word = 0;
 
     int i;
     int len = flags & rdp_DAT ? size : 0;
@@ -152,9 +152,9 @@ unint16_t rdp_checksum(
 }
 
 // Getters
-unint16_t rdp_flags() { return flags; }
-unint32_t rdp_seq_ack_number() { return seq_ack_number; }
-unint16_t rdp_payload_size() { return payload_size; }
-unint16_t rdp_window_size() { return window_size; }
-unint16_t rdp_size() { return size; }
+uint16_t rdp_flags() { return flags; }
+uint32_t rdp_seq_ack_number() { return seq_ack_number; }
+uint16_t rdp_payload_size() { return payload_size; }
+uint16_t rdp_window_size() { return window_size; }
+uint16_t rdp_size() { return size; }
 char* rdp_payload() { return payload; }

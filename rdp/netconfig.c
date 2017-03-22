@@ -249,15 +249,15 @@ int rdp_listen(const int timeout_milli) {
 /**
  * Send a packet.
  *
- * @param const unint16_t flags
- * @param const unint16_t seq_ack_number
- * @param const unint16_t size
+ * @param const uint16_t flags
+ * @param const uint16_t seq_ack_number
+ * @param const uint16_t size
  * @param const char*     payload
  */
 void rdp_send(
-    const unint16_t flags,
-    const unint32_t seq_ack_number,
-    const unint16_t size,
+    const uint16_t flags,
+    const uint32_t seq_ack_number,
+    const uint16_t size,
     const char* payload
 ) {
     int packed_size = rdp_packed_size(flags & rdp_DAT ? size : 0);

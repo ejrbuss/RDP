@@ -46,9 +46,9 @@ extern void rdp_open_destination_socket(const char* ip, const char* port);
 extern void rdp_close_sockets();
 extern int rdp_listen(const int timeout_milli);
 extern void rdp_send(
-    const unint16_t flags,
-    const unint32_t seq_ack_number,
-    const unint16_t size,
+    const uint16_t flags,
+    const uint32_t seq_ack_number,
+    const uint16_t size,
     const char* payload
 );
 extern int* rdp_stats();
