@@ -26,13 +26,13 @@ void rdp_filestream_open(const char* file, const char* flag) {
         if(file_write == NULL) {
             rdp_exit(EXIT_FAILURE, "Cannot open file: %s", file);
         }
-        rdp_log("...File opend for writing.\n");
+        rdp_log("...File opened for writing.\n");
     } else if(rdp_streq(flag, "r")) {
         file_read = fopen(file, flag);
         if(file_read == NULL) {
             rdp_exit(EXIT_FAILURE, "Cannot open file: %s", file);
         }
-        rdp_log("...File opend for reading.\n");
+        rdp_log("...File opened for reading.\n");
     } else {
          rdp_exit(EXIT_FAILURE, "Unrecognized flag: %s", flag);
     }

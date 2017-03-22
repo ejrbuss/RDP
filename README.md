@@ -13,6 +13,7 @@ The header is byte formatted as follows (sizes are in bytes):
 |           |   |T|T|N|N|K|       |       |  Size   |
 +-----------+-------------+-------+-------+---------+
 ```
+
 1. `_magic_` identifies the header as rdp
 2. `flags` are used to indicate packet types
 3. `Sequence Number` indicates sequence number
@@ -126,10 +127,3 @@ state:
         -> send ACK || send -> RST
 ```
 
-```
-tc qdisc show
-tc qdisc add dev br0 root netem drop 10%
-tc qdisc add dev vlan1 root netem drop 10%
-tc qdisc del dev br0 root netem drop 10%
-tc qdisc del dev clan1 root netem drop 10%
-```

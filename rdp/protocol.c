@@ -75,6 +75,7 @@ char* rdp_pack(
     // Return packed buffer
     return buffer;
 }
+
 /**
  * Reads a received buffer and parses the header and payload. Expects the
  * given buffer to be at least rdp_MAX_PACKET_SIZE in length. Returns a flag
@@ -99,7 +100,7 @@ int rdp_parse(char* buffer) {
     memcpy(_magic_,         buffer + 0,  6);
     memcpy(&flags,          buffer + 6,  1);
     memcpy(&seq_ack_number, buffer + 7,  4);
-    memcpy(&size,           buffer + 11,  2);
+    memcpy(&size,           buffer + 11, 2);
     memcpy(&checksum,       buffer + 13, 2);
     if(flags & rdp_DAT) {
         memcpy(&payload_size, buffer + 11, 2);

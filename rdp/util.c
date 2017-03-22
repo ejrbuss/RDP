@@ -217,5 +217,6 @@ int rdp_min(const int a, const int b) {
  */
 int rdp_get_seq_number() {
     // Mask to the first 16 bits.
+    seed(time());
     return rand() & 0xffff;
 }
