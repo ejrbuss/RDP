@@ -1,3 +1,7 @@
+/**
+ * @author ejrbuss
+ * @date 2017
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "filestream.h"

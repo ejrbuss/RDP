@@ -1,3 +1,7 @@
+/**
+ * @author ejrbuss
+ * @date 2017
+ */
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>

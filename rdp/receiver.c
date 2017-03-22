@@ -2,7 +2,8 @@
  * @author ejrbuss
  * @date 2017
  *
- *  RDP receiver file. Contains functions for managing the receiver state machine.
+ *  RDP receiver file. Contains functions for managing the receiver state
+ * machine.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -93,16 +94,21 @@ void re_ack() {
 }
 
 /**
+ * State machine function. Recieved SYN packet.
  *
+ * ACK the sequence number + 1.
  */
 void received_SYN() {
-    connected  = 1;
-    ack_number = rdp_seq_ack_number() + 1;
+    connected     = 1;
+    timoeut_count = 0;
+    ack_number    = rdp_seq_ack_number() + 1;
     re_ack();
 }
 
 /**
+ * State machine function. Recieved FIN packet.
  *
+ * ACK the sequence number + 1;
  */
 void received_FIN() {
     timeout_count = 0;
@@ -112,7 +118,15 @@ void received_FIN() {
 }
 
 /**
+ * State machine function. Recieved DAT packet.
  *
+ * If the sequence number is the next packet write it to file and write any
+ * out of packets that are now ready.
+ *
+ * If the window is full just indicate that a packet was recieved otherwise
+ * add the packet to the out of order buffer.
+ *
+ * Finally recaclulate window size.
  */
 void received_DAT() {
 
@@ -166,7 +180,9 @@ void received_DAT() {
 }
 
 /**
+ * State machine function. Recieved RST packet.
  *
+ * Reset timeout count.
  */
 void received_RST() {
     timeout_count = 0;
@@ -177,7 +193,11 @@ void received_RST() {
 }
 
 /**
+ * State machine function. Timedout.
  *
+ * When disconnecting prepare to close if sufficient timeouts have occured.
+ *
+ * WHen connected send a new ACK packet and increase the timeout count.
  */
 void received_timeout() {
     if(disconnecting)  {
@@ -202,7 +222,7 @@ void received_timeout() {
 }
 
 /**
- *
+ * State machine for the receive process.
  */
 void rdp_receiver_receive() {
     while(!disconnect) {
@@ -223,7 +243,7 @@ void rdp_receiver_receive() {
 }
 
 /**
- *
+ * Print the Receiver stats.
  */
 void rdp_receiver_stats() {
     int* stats = rdp_stats();

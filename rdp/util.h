@@ -1,3 +1,7 @@
+/**
+ * @author ejrbuss
+ * @date 2017
+ */
 #ifndef RDP_UTIL_HEADER
 #define RDP_UTIL_HEADER
 

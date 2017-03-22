@@ -1,3 +1,7 @@
+/**
+ * @author ejrbuss
+ * @date 2017
+ */
 #ifndef RDP_NOTCONFIG_HEADER
 #define RDP_NETCONFIG_HEADER
 
@@ -6,10 +10,10 @@
 // Net Constants (Change these for performance conerns)
 #define SOCK_BUFFER_SIZE 2048
 #define ADDR_SIZE        256
-#define TIMEOUT          8
-#define MAXIMUM_TIMEOUTS 256
-#define MAXIMUM_RESETS   16
-#define WINDOW_SIZE      16
+#define TIMEOUT          8   // Timeout time in milliseconds
+#define MAXIMUM_TIMEOUTS 256 // Maximum number of timeouts
+#define MAXIMUM_RESETS   16  // Maximum number of resets
+#define WINDOW_SIZE      16  // Maximum number of out of order packets
 
 // Events
 #define event_SYN        0

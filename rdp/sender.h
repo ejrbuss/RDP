@@ -1,3 +1,7 @@
+/**
+ * @author ejrbuss
+ * @date 2017
+ */
 #ifndef RDP_SENDER_HEADER
 #define RDP_SENDER_HEADER
 
