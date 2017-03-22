@@ -40,24 +40,24 @@ FIN and RST packets? How to choose the initial sequence number?
 Packets types are handled in a sperate process from recieving packets. First
 a `listen_rdp` function waits for a timeout or a socket to respond with a
 message. Then it attempts to read and parse the message. From here both
-the reciever and sender respond to the event (either a recieved packet or timeout)
+the receiver and sender respond to the event (either a received packet or timeout)
 depending on their current state. They are implemented roughly like a state
 machine from there.
 
-Sequence numbers are slected by random by the reciever when initiating a
+Sequence numbers are slected by random by the receiver when initiating a
 connection using rand() truncated to 16 bits.
 
-SYN is sent by the sender to the reciever to initiate a
-connection. The reciever uses ACK to respond. The sequence number is incremented
+SYN is sent by the sender to the receiver to initiate a
+connection. The receiver uses ACK to respond. The sequence number is incremented
 after this exchange.
 
-FIN is sent by the sender to the reciever to end the
-connection. The reciever uses ACK to respond. The connection is considered
-closed after this exchange. In the final version of this code the reciever
-will stay open after sending its ACK to ensure it does no recieve another FIN
+FIN is sent by the sender to the receiver to end the
+connection. The receiver uses ACK to respond. The connection is considered
+closed after this exchange. In the final version of this code the receiver
+will stay open after sending its ACK to ensure it does no receive another FIN
 packet from the sender (indicating its first ACK was dropped).
 
-IF either sender or reciever times out too many times
+IF either sender or receiver times out too many times
 a RST packet is sent which causes the other connected
 party to reset their current action (initiation, data
 transfer, or closing). The RST process is not yet fully implemented. Currently
@@ -78,7 +78,7 @@ point in the currently opened file. This means the sequence number can be used
 to index and the size of the packet can be used to stream. Writing is handled
 similarly where any amount of data can be streamed to the file at a time.
 
-Both sender and reciever write (if needed) their data open recieving it.
+Both sender and receiver write (if needed) their data open recieving it.
 
 4. How do you design and implement the error detection, notification and
 recovery? How to use timer? How many timers do you use? How to respond to
@@ -113,7 +113,7 @@ state:
         RST
             -> send FIN
 
-:reciever
+:receiver
     SYN
         -> send ACK
     RST

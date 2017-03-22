@@ -16,7 +16,7 @@
 static int stats[stat_length];
 
 /* Buffers */
-static char recieve_buffer[SOCK_BUFFER_SIZE];
+static char receive_buffer[SOCK_BUFFER_SIZE];
 static char send_buffer[SOCK_BUFFER_SIZE];
 static char source_ip[ADDR_SIZE];
 static char destination_ip[ADDR_SIZE];
@@ -121,7 +121,7 @@ void rdp_open_destination_socket(const char* ip, const char* port) {
     destination_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (destination_socket == -1) {
         rdp_close_sockets();
-        rdp_exit(EXIT_FAILURE, "Unable to create reciever socket");
+        rdp_exit(EXIT_FAILURE, "Unable to create receiver socket");
     }
 
     // Create address
@@ -184,18 +184,18 @@ int rdp_listen(const int timeout_milli) {
             return event_timeout;
     }
 
-    // Recieve and parse the packet
-    rdp_zero(recieve_buffer, SOCK_BUFFER_SIZE);
+    // receive and parse the packet
+    rdp_zero(receive_buffer, SOCK_BUFFER_SIZE);
     recsize = recvfrom(
         source_socket,
-        (void*) recieve_buffer,
+        (void*) receive_buffer,
         SOCK_BUFFER_SIZE,
         0,
         (struct sockaddr*) &destination_address,
         &socket_length
     );
 
-    int parse = rdp_parse(recieve_buffer);
+    int parse = rdp_parse(receive_buffer);
 
     // We don't yet know our destination so read it in
     if(!destination_bound) {
@@ -205,7 +205,7 @@ int rdp_listen(const int timeout_milli) {
         sprintf(port, "%d", ntohs(destination_address.sin_port));
         if (ip == NULL) {
             rdp_close_sockets();
-            rdp_exit(EXIT_FAILURE, "Failed to read destination IP:port from recieved packet: %s\n", strerror(errno));
+            rdp_exit(EXIT_FAILURE, "Failed to read destination IP:port from received packet: %s\n", strerror(errno));
         }
         rdp_open_destination_socket(ip, port);
     }
@@ -225,14 +225,14 @@ int rdp_listen(const int timeout_milli) {
     // rdp_log_hex(rdp_payload(), rdp_payload_size());
 
     // Compute statistics
-    stats[stat_recieved_SYN]          += !!(rdp_flags() & rdp_SYN);
-    stats[stat_recieved_FIN]          += !!(rdp_flags() & rdp_FIN);
-    stats[stat_recieved_DAT]          += !!(rdp_flags() & rdp_DAT);
-    stats[stat_recieved_ACK]          += !!(rdp_flags() & rdp_ACK);
-    stats[stat_recieved_RST]          += !!(rdp_flags() & rdp_RST);
-    stats[stat_recieved_DAT_unique]   += !!(rdp_flags() & rdp_DAT) & !(rdp_flags() & rdp_RES);
-    stats[stat_recieved_bytes_unique] += !(rdp_flags() & rdp_RES) * rdp_size();
-    stats[stat_recieved_bytes]        += rdp_size();
+    stats[stat_received_SYN]          += !!(rdp_flags() & rdp_SYN);
+    stats[stat_received_FIN]          += !!(rdp_flags() & rdp_FIN);
+    stats[stat_received_DAT]          += !!(rdp_flags() & rdp_DAT);
+    stats[stat_received_ACK]          += !!(rdp_flags() & rdp_ACK);
+    stats[stat_received_RST]          += !!(rdp_flags() & rdp_RST);
+    stats[stat_received_DAT_unique]   += !!(rdp_flags() & rdp_DAT) & !(rdp_flags() & rdp_RES);
+    stats[stat_received_bytes_unique] += !(rdp_flags() & rdp_RES) * rdp_size();
+    stats[stat_received_bytes]        += rdp_size();
 
     // Determine event
     if(parse == 0) {

@@ -4,8 +4,8 @@
 extern void rdp_sender(
     const char* sender_ip,
     const char* sender_port,
-    const char* reciever_ip,
-    const char* reciever_port
+    const char* receiver_ip,
+    const char* receiver_port
 );
 extern void rdp_sender_connect();
 extern void rdp_sender_send();

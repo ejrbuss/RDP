@@ -4,7 +4,7 @@
  *
  * RDPR
  *
- * Code entry point for the rdp reciever demo. This file is responsible for
+ * Code entry point for the rdp receiver demo. This file is responsible for
  * parsing command line options and calling the appropriate functions from the
  * rdp library.
  */
@@ -17,7 +17,7 @@
 void rdpr_test();
 
 static const char* usage =
-"Reciever Demo usage:\n\n"
+"receiver Demo usage:\n\n"
 "  rdpr [options] <IP> <port> <file>\n\n";
 
 int main(int argc, char** argv) {
@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
         if(rdp_opt_cmp("-h") || rdp_opt_cmp("--help")) {
             rdp_exit(EXIT_SUCCESS,
                 "%s%s"
-                "Recieves a file from rdps.\n"
+                "receives a file from rdps.\n"
                 "Options:\n"
                 "  -h --help    display this message\n"
                 "  -v --version display version\n"
@@ -68,13 +68,13 @@ int main(int argc, char** argv) {
     // Open filestream
     rdp_filestream_open(args[receiver_file_name], "w");
     // Configure network
-    rdp_reciever(args[receiver_ip], args[receiver_port]);
-    // Recieve file
-    rdp_reciever_recieve();
+    rdp_receiver(args[receiver_ip], args[receiver_port]);
+    // receive file
+    rdp_receiver_receive();
     // Close filestream
     rdp_filestream_close();
     // Print stats
-    rdp_reciever_stats();
+    rdp_receiver_stats();
 
     return EXIT_SUCCESS;
 }
@@ -83,9 +83,9 @@ int main(int argc, char** argv) {
  * Run a default configuration
  */
 void rdpr_test() {
-    rdp_filestream_open("recieve/test.dat", "w");
-    rdp_reciever("10.10.1.100", "9001");
-    rdp_reciever_recieve();
+    rdp_filestream_open("receive/test.dat", "w");
+    rdp_receiver("10.10.1.100", "9001");
+    rdp_receiver_receive();
     rdp_filestream_close();
-    rdp_reciever_stats();
+    rdp_receiver_stats();
 }

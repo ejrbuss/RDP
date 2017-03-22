@@ -2,12 +2,12 @@
  * @author ejrbuss
  * @date 2017
  *
- *  RDP Reciever file. Contains functions for managing the reciever state machine.
+ *  RDP receiver file. Contains functions for managing the receiver state machine.
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "reciever.h"
+#include "receiver.h"
 #include "filestream.h"
 #include "netconfig.h"
 #include "util.h"
@@ -16,19 +16,19 @@
 static char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
 // Out of order pafcket sequence numbers
 static uint32_t payload_buffer_seq[WINDOW_SIZE];
-// Indicates the number of recieved packets
-static int recieved_packets;
+// Indicates the number of received packets
+static int received_packets;
 // Indicates the number of resets
 static int reset_count;
 // Indicates the current number of timeouts
 static int timeout_count;
 // Indicates the current timoeut time
 static int timeout;
-// Indicates if the reciever is currently connected
+// Indicates if the receiver is currently connected
 static int connected;
-// Inidcates if the reciever is finished
+// Inidcates if the receiver is finished
 static int disconnect;
-// Inidcates if the reciever has entered the disconnection process
+// Inidcates if the receiver has entered the disconnection process
 static int disconnecting;
 // Inidcates the current window size in # of packets
 static uint16_t current_window_size;
@@ -38,20 +38,20 @@ static uint32_t ack_number;
 static uint32_t last_ack;
 
 /**
- * Creates a new RDP reciever. Prepares a source socket. After this function has
- * been called the RDP reciever can be asked to wait for an RDP sender.
+ * Creates a new RDP receiver. Prepares a source socket. After this function has
+ * been called the RDP receiver can be asked to wait for an RDP sender.
  *
- * @param const char* reciever_ip   the IP to listen on
- * @param const char* reciever_port the port to listen on
+ * @param const char* receiver_ip   the IP to listen on
+ * @param const char* receiver_port the port to listen on
  */
-void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
+void rdp_receiver(const char* receiver_ip, const char* receiver_port) {
 
     // Init source socket and socket address
-    rdp_open_source_socket(reciever_ip, reciever_port);
+    rdp_open_source_socket(receiver_ip, receiver_port);
 
     current_window_size = WINDOW_SIZE;
     timeout             = TIMEOUT / 2;
-    recieved_packets    = 0;
+    received_packets    = 0;
     reset_count         = 0;
     timeout_count       = 0;
     connected           = 0;
@@ -95,7 +95,7 @@ void re_ack() {
 /**
  *
  */
-void recieved_SYN() {
+void received_SYN() {
     connected  = 1;
     ack_number = rdp_seq_ack_number() + 1;
     re_ack();
@@ -104,7 +104,7 @@ void recieved_SYN() {
 /**
  *
  */
-void recieved_FIN() {
+void received_FIN() {
     timeout_count = 0;
     disconnecting = 1;
     ack_number    = rdp_seq_ack_number() + 1;
@@ -114,10 +114,10 @@ void recieved_FIN() {
 /**
  *
  */
-void recieved_DAT() {
+void received_DAT() {
 
     int i;
-    timeout       = TIMEOUT;
+    timeout       = TIMEOUT / 2;
     timeout_count = 0;
 
     // In order check
@@ -125,7 +125,7 @@ void recieved_DAT() {
         rdp_log("1");
         rdp_filestream_write(rdp_payload(), rdp_payload_size());
         ack_number += rdp_payload_size();
-        recieved_packets++;
+        received_packets++;
 
         int dequeue;
         do {
@@ -139,12 +139,12 @@ void recieved_DAT() {
                     ack_number           += strlen(payload);
                     payload_buffer_seq[i] = 0;
                     dequeue               = 1;
-                    recieved_packets++;
+                    received_packets++;
                 }
             }
         } while(dequeue);
     } else if(current_window_size == 0) {
-        recieved_packets = 0;
+        received_packets = 0;
     } else {
         // Queue data
         if(rdp_seq_ack_number() > ack_number && not_in_queue(rdp_seq_ack_number())) {
@@ -168,7 +168,7 @@ void recieved_DAT() {
 /**
  *
  */
-void recieved_RST() {
+void received_RST() {
     timeout_count = 0;
     if(reset_count++ > MAXIMUM_RESETS) {
         rdp_close_sockets();
@@ -179,7 +179,7 @@ void recieved_RST() {
 /**
  *
  */
-void recieved_timeout() {
+void received_timeout() {
     if(disconnecting)  {
         if(timeout_count++ > MAXIMUM_TIMEOUTS) {
             rdp_close_sockets();
@@ -191,7 +191,7 @@ void recieved_timeout() {
                 "    Disconnecting: %d\n",
             connected, disconnecting
         );
-        recieved_packets = 0;
+        received_packets = 0;
         timeout *= 1.5;
         if((timeout_count += (timeout / TIMEOUT)) > MAXIMUM_TIMEOUTS) {
             rdp_close_sockets();
@@ -204,20 +204,20 @@ void recieved_timeout() {
 /**
  *
  */
-void rdp_reciever_recieve() {
+void rdp_receiver_receive() {
     while(!disconnect) {
         switch(rdp_listen(timeout)) {
-            case event_SYN: recieved_SYN(); break;
-            case event_FIN: recieved_FIN(); break;
-            case event_DAT: recieved_DAT(); break;
-            case event_RST: recieved_RST(); break;
+            case event_SYN: received_SYN(); break;
+            case event_FIN: received_FIN(); break;
+            case event_DAT: received_DAT(); break;
+            case event_RST: received_RST(); break;
             case event_ACK:
             case event_bad_packet:
                 if(connected) {
                     re_ack();
                 }
                 break;
-            case event_timeout: recieved_timeout(); break;
+            case event_timeout: received_timeout(); break;
         }
     }
 }
@@ -225,7 +225,7 @@ void rdp_reciever_recieve() {
 /**
  *
  */
-void rdp_reciever_stats() {
+void rdp_receiver_stats() {
     int* stats = rdp_stats();
     printf("\n\n"
         "total data bytes received: %d\n"
@@ -238,13 +238,13 @@ void rdp_reciever_stats() {
         "ACK packets sent: %d\n"
         "RST packets sent: %d\n"
         "total time duration (second): %d\n",
-        stats[stat_recieved_bytes],
-        stats[stat_recieved_bytes_unique],
-        stats[stat_recieved_DAT],
-        stats[stat_recieved_DAT_unique],
-        stats[stat_recieved_SYN],
-        stats[stat_recieved_FIN],
-        stats[stat_recieved_RST],
+        stats[stat_received_bytes],
+        stats[stat_received_bytes_unique],
+        stats[stat_received_DAT],
+        stats[stat_received_DAT_unique],
+        stats[stat_received_SYN],
+        stats[stat_received_FIN],
+        stats[stat_received_RST],
         stats[stat_sent_ACK],
         stats[stat_sent_RST],
         (stats[stat_end_time] - stats[stat_start_time])

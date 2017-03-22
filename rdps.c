@@ -17,7 +17,7 @@ void rdps_test();
 
 static const char* usage =
 "Sender Demo usage:\n\n"
-"  rdps [options] <IP> <port> <reciever IP> <reciever port> <file>\n\n";
+"  rdps [options] <IP> <port> <receiver IP> <receiver port> <file>\n\n";
 
 int main(int argc, char** argv) {
 
@@ -60,8 +60,8 @@ int main(int argc, char** argv) {
     switch(arg) {
         case 0: rdp_exit(EXIT_FAILURE, "Missing required argument IP\n%s", usage);
         case 1: rdp_exit(EXIT_FAILURE, "Missing required argument port\n%s", usage);
-        case 2: rdp_exit(EXIT_FAILURE, "Missing required argument reciever IP\n%s", usage);
-        case 3: rdp_exit(EXIT_FAILURE, "Missing required argument reciever port\n%s", usage);
+        case 2: rdp_exit(EXIT_FAILURE, "Missing required argument receiver IP\n%s", usage);
+        case 3: rdp_exit(EXIT_FAILURE, "Missing required argument receiver port\n%s", usage);
         case 4: rdp_exit(EXIT_FAILURE, "Missing required argument file\n%s", usage);
         default: break;
     }

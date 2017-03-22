@@ -1,15 +1,8 @@
 #ifndef RDP_PROTOCOL_HEADER
 #define RDP_PROTOCOL_HEADER
 
+// Include sized int types
 #include <stdint.h>
-// Manually define uint8_t and uint16_t due to compilation erros when
-// including headers. This assumes char is 1 bytes and short is 2, however
-// this assumption does not need to hold for the code to function. What matters
-// is that the values are encoded as unsigned valeus so that runcated integers
-// are equivalent regardless of size.
-//typedef unsigned char  uint8_t;
-//typedef unsigned short uint16_t;
-//typedef unsigned int   uint32_t;
 
 // Defines the full size of the header
 #define rdp_HEADER_SIZE 15

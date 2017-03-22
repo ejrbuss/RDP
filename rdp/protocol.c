@@ -72,11 +72,11 @@ char* rdp_pack(
     return buffer;
 }
 /**
- * Reads a recieved buffer and parses the header and payload. Expects the
+ * Reads a received buffer and parses the header and payload. Expects the
  * given buffer to be at least rdp_MAX_PACKET_SIZE in length. Returns a flag
  * indicating if the packet had a valid header and had a matching checksum.
  *
- * @param   char* buffer a buffer containing recieved bytes
+ * @param   char* buffer a buffer containing received bytes
  * @returns int          a flag indicating if the header was valid
  */
 int rdp_parse(char* buffer) {
