@@ -6,8 +6,8 @@
 extern void rdp_debug();
 extern void rdp_exit(const int status, const char *fmt, ...);
 extern void rdp_log(const char *fmt, ...);
-extern void rdp_log_hex(const char* src, int length);
-extern void rdp_no_newlines(char* src);
+extern void rdp_log_hex(const char* src, const int length);
+extern void rdp_no_newlines(char* src, const char replacement);
 extern void rdp_log_packet(
     const char* event,
     const char* source_ip,

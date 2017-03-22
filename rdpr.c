@@ -1,3 +1,13 @@
+/**
+ * @author ejrbuss
+ * @date 2017
+ *
+ * RDPR
+ *
+ * Code entry point for the rdp reciever demo. This file is responsible for
+ * parsing command line options and calling the appropriate functions from the
+ * rdp library.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,7 +22,7 @@ static const char* usage =
 
 int main(int argc, char** argv) {
 
-    enum {receiver_ip, receiver_port, receiver_file_name};
+    enum { receiver_ip, receiver_port, receiver_file_name };
     char* args[4];
     int arg = 0;
     int i;
@@ -69,15 +79,13 @@ int main(int argc, char** argv) {
     return EXIT_SUCCESS;
 }
 
+/**
+ * Run a default configuration
+ */
 void rdpr_test() {
-    // Open filestream
     rdp_filestream_open("recieve/test.dat", "w");
-    // Configure network
     rdp_reciever("10.10.1.100", "9001");
-    // Recieve file
     rdp_reciever_recieve();
-    // Close filestream
     rdp_filestream_close();
-    // Print stats
     rdp_reciever_stats();
 }

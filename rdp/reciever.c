@@ -1,3 +1,9 @@
+/**
+ * @author ejrbuss
+ * @date 2017
+ *
+ *  RDP Reciever file. Contains functions for managing the reciever state machine.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,24 +12,37 @@
 #include "netconfig.h"
 #include "util.h"
 
+// Out of order packet buffer
 static char payload_buffer[(WINDOW_SIZE + 1) * rdp_MAX_PACKET_SIZE];
+// Out of order pafcket sequence numbers
 static unint32_t payload_buffer_seq[WINDOW_SIZE];
-
+// Indicates the number of recieved packets
 static int recieved_packets;
+// Indicates the number of resets
 static int reset_count;
+// Indicates the current number of timeouts
 static int timeout_count;
+// Indicates the current timoeut time
 static int timeout;
+// Indicates if the reciever is currently connected
 static int connected;
+// Inidcates if the reciever is finished
 static int disconnect;
+// Inidcates if the reciever has entered the disconnection process
 static int disconnecting;
-
+// Inidcates the current window size in # of packets
 static unint16_t current_window_size;
+// Indicates the current acknowldgement number
 static unint32_t ack_number;
+// Inidcates the last ack sent
 static unint32_t last_ack;
 
 /**
- * @param const char* reciever_ip
- * @param const char* reciever_port
+ * Creates a new RDP reciever. Prepares a source socket. After this function has
+ * been called the RDP reciever can be asked to wait for an RDP sender.
+ *
+ * @param const char* reciever_ip   the IP to listen on
+ * @param const char* reciever_port the port to listen on
  */
 void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
 
@@ -47,7 +66,11 @@ void rdp_reciever(const char* reciever_ip, const char* reciever_port) {
     }
 }
 /**
+ * Helper function to determine if a sequence number is in the current out of
+ * order buffer.
  *
+ * @param   unint32_t seq the sequence number
+ * @returns int           1 if the sequence number is not in the buffer
  */
 int not_in_queue(unint32_t seq) {
     int i;

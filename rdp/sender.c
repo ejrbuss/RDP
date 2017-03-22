@@ -1,3 +1,9 @@
+/**
+ * @author ejrbuss
+ * @date 2017
+ *
+ * RDP Sender file. Contains functions for managing the sender state machine.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "sender.h"
@@ -5,21 +11,36 @@
 #include "netconfig.h"
 #include "util.h"
 
+// Payload size is the packet size minus the header
 #define PAYLOAD_SIZE (rdp_MAX_PACKET_SIZE - rdp_HEADER_SIZE)
 
+// Indicates that the connection has closed
 static int finished;
+// Indicates that the connection is open
 static int connected;
+// Indicates the number of RSTs sent or recieveed
 static int reset_count;
+// Indicates the current number of timeouts
 static int timeout_count;
+// Indicates the current timeout time
 static int timeout;
+// Inidcates the sending file size
 static int file_size;
-
+// Indicates the current sequence number
 static unint32_t seq_number;
+// Inidcates the previously ACKed sequence number
 static unint32_t last_seq;
+// Indicates the offset of the sequence number from the file position
 static unint16_t offset;
 
 /**
+ * Creates a new RDP sender. Prepares a source socket. After this function has
+ * been called the RDP sender can be asked to connect to a RDP reciever.
  *
+ * @param const char* sender_ip     IP address to listen on
+ * @param const char* sender_port   Port to listen on
+ * @param const char* reciever_ip   IP address to send to
+ * @param const char* reciever-port Port to send to
  */
 void rdp_sender(
     const char* sender_ip,
@@ -32,19 +53,22 @@ void rdp_sender(
     // Init source socket and socket address
     rdp_open_source_socket(sender_ip, sender_port);
 
+    // Prepare initial state
     finished      = 0;
     connected     = 0;
     reset_count   = 0;
     timeout_count = 0;
     file_size     = rdp_filestream_size();
-
     timeout       = TIMEOUT * 2;
     seq_number    = rdp_get_seq_number();
     offset        = seq_number + 1;
 }
 
 /**
+ * Connect state machine function. Recieved ACK packet.
  *
+ * If the recieved ACK packet contains the expected sequence number indicate
+ * the connection as opend. Otherwise resend the SYN packet.
  */
 void connect_recieved_ACK() {
     timeout_count  = 0;
@@ -58,7 +82,9 @@ void connect_recieved_ACK() {
 }
 
 /**
+ * Connect state machine function. Recieved RST packet.
  *
+ * Reset timeout count and resend SYN packet.
  */
 void connect_recieved_RST() {
     timeout_count = 0;
@@ -70,7 +96,9 @@ void connect_recieved_RST() {
 }
 
 /**
+ * Connect state machine function. Timedout.
  *
+ * Resend SYN packet.
  */
 void connect_recieved_timeout() {
     if(timeout_count++ > MAXIMUM_TIMEOUTS) {
@@ -82,7 +110,7 @@ void connect_recieved_timeout() {
 }
 
 /**
- *
+ * State machine for connection process.
  */
 void rdp_sender_connect() {
 
@@ -105,7 +133,9 @@ void rdp_sender_connect() {
 }
 
 /**
- *
+ * Helper function for sending data packets. Sends the number of packets equal
+ * to the last recieved window size. Sends a minimum of one packet. Will not
+ * send any more packets than are needed to finish sending the file.
  */
 void send_packets() {
 
@@ -135,7 +165,10 @@ void send_packets() {
 }
 
 /**
+ * Send state machine function. Recieved ACK packet.
  *
+ * Reset teimout. Shift sequence number. Check if finished, if not send more DAT
+ * packets.
  */
 void send_recieved_ACK() {
     timeout_count  = 0;
@@ -149,7 +182,9 @@ void send_recieved_ACK() {
 }
 
 /**
+ * Send state machine function. Recieved ACK packet.
  *
+ * Reset timeout count and restart data transfer.
  */
 void send_recieved_RST() {
     timeout_count = 0;
@@ -162,10 +197,11 @@ void send_recieved_RST() {
 }
 
 /**
+ * Send state machine function. Timedout.
  *
+ * Do nothing until timeout_count is hit.
  */
 void send_recieved_timeout() {
-    //send_packets();
     if(timeout_count++ > MAXIMUM_TIMEOUTS) {
         rdp_close_sockets();
         rdp_exit(EXIT_FAILURE, "RDP transimmision failed as the connection timed out too many times.");
@@ -173,7 +209,7 @@ void send_recieved_timeout() {
 }
 
 /**
- *
+ * State machine for send process.
  */
 void rdp_sender_send() {
 
@@ -195,7 +231,10 @@ void rdp_sender_send() {
 }
 
 /**
+ * Disconnect state machine function. Recieved ACK packet.
  *
+ * If the recieved ACK packet contains the expected sequence number, disconnects
+ * otherwise resend the FIN packet.
  */
 void disconnect_recieved_ACK() {
     if(rdp_seq_ack_number() == seq_number + 1) {
@@ -208,7 +247,9 @@ void disconnect_recieved_ACK() {
 }
 
 /**
+ * Disconnect state machine function. Recieved RST packet.
  *
+ * Reset the timeout count. Resend the FIN packet.
  */
 void disconnect_recieved_RST() {
     timeout_count = 0;
@@ -219,7 +260,9 @@ void disconnect_recieved_RST() {
 }
 
 /**
+ * Disconnect state machine function. Timedout.
  *
+ * Resend the FIN packet.
  */
 void disconnect_recieved_timeout() {
     if(timeout_count++ > MAXIMUM_TIMEOUTS) {
@@ -231,7 +274,7 @@ void disconnect_recieved_timeout() {
 }
 
 /**
- *
+ * State machine for the disconnect process.
  */
 void rdp_sender_disconnect() {
 
@@ -253,6 +296,9 @@ void rdp_sender_disconnect() {
     }
 }
 
+/**
+ * Print the sender stats.
+ */
 void rdp_sender_stats() {
     int* stats = rdp_stats();
     printf("\n\n"
