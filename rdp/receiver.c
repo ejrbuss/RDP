@@ -100,7 +100,7 @@ void re_ack() {
  */
 void received_SYN() {
     connected     = 1;
-    timoeut_count = 0;
+    timeout_count = 0;
     ack_number    = rdp_seq_ack_number() + 1;
     re_ack();
 }
